@@ -6,7 +6,7 @@ import {
     getAdminCategories,
     getCategory,
     updateCategory,
-    deleteCategory,
+    deleteCategory, saveCategoryOrder,
 } from "../controllers/category.controller.js";
 
 import {
@@ -40,6 +40,12 @@ router
         validateRequest(createCategorySchema),
         createCategory,
     );
+router.route("/admin/categories/order").patch(
+    isAuthenticatedUser,
+    authorizeRoles("admin"),
+    saveCategoryOrder,
+);
+
 router
     .route("/admin/categories/:id")
     .put(

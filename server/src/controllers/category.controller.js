@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Category from "../models/category.model.js";
 import ErrorHandler from "../utils/errorHandler.js";
 import asyncHandler from "../utils/asyncHandler.js";
@@ -21,6 +22,13 @@ export const createCategory = asyncHandler(async (req, res) => {
         throw new ErrorHandler("Category with this name already exists", 409);
     }
 
+    // নতুন category সবার শেষে যাবে
+    const lastCategory = await Category.findOne()
+        .sort({ displayOrder: -1 })
+        .select("displayOrder");
+
+    const nextOrder = lastCategory ? (lastCategory.displayOrder || 0) + 1 : 0;
+
     const { url, fileId } = await uploadFile(
         file.buffer,
         file.originalname,
@@ -36,6 +44,7 @@ export const createCategory = asyncHandler(async (req, res) => {
             imageFileId: fileId,
             isActive: isActive !== undefined ? isActive : true,
             isPopular: isPopular !== undefined ? isPopular : false,
+            displayOrder: nextOrder,
         });
     } catch (error) {
         await deleteFile(fileId);
@@ -50,22 +59,25 @@ export const createCategory = asyncHandler(async (req, res) => {
 });
 
 export const getCategories = asyncHandler(async (req, res) => {
-    const { page = 1, limit, sort = "newest", isPopular } = req.query;
+    // default sort এখন display-order, যাতে admin-এর save করা order সাইটে দেখায়
+    const { page = 1, limit, sort = "display-order", isPopular } = req.query;
 
-    const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+    const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+
     const parsedLimit = parseInt(limit, 10);
     const limitNum =
         Number.isFinite(parsedLimit) && parsedLimit > 0
             ? Math.min(parsedLimit, 100)
             : null;
 
-    const skip = limitNum ? (pageNum - 1) * limitNum : 0;
+    const skip = limitNum ? (pageNum - 1) * limitNum : 0;
+
     if (isPopular === "true") {
         const categories = await Category.find({
             isActive: true,
             isPopular: true,
         })
-            .sort({ createdAt: -1 })
+            .sort({ displayOrder: 1, createdAt: -1 })
             .skip(limitNum ? skip : 0)
             .limit(limitNum)
             .select("-imageFileId -__v");
@@ -75,8 +87,10 @@ export const getCategories = asyncHandler(async (req, res) => {
             message: "Popular categories fetched successfully",
             data: categories,
         });
-    }
+    }
+
     let sortOption = {
+        displayOrder: 1,
         createdAt: -1,
     };
 
@@ -86,6 +100,8 @@ export const getCategories = asyncHandler(async (req, res) => {
         sortOption = { createdAt: 1 };
     } else if (sort === "name") {
         sortOption = { "name.en": 1 };
+    } else if (sort === "display-order") {
+        sortOption = { displayOrder: 1, createdAt: -1 };
     }
 
     const pipeline = [
@@ -208,6 +224,7 @@ export const getAdminCategories = asyncHandler(async (req, res) => {
         },
         {
             $sort: {
+                displayOrder: 1,
                 createdAt: -1,
             },
         },
@@ -318,6 +335,40 @@ export const updateCategory = asyncHandler(async (req, res) => {
 
         throw error;
     }
+});
+
+export const saveCategoryOrder = asyncHandler(async (req, res) => {
+    const { orders } = req.body;
+
+    if (!Array.isArray(orders) || orders.length === 0) {
+        throw new ErrorHandler("Invalid order data", 400);
+    }
+
+    const isValid = orders.every(
+        (item) =>
+            item &&
+            mongoose.isValidObjectId(item.categoryId) &&
+            Number.isInteger(item.order) &&
+            item.order >= 0,
+    );
+
+    if (!isValid) {
+        throw new ErrorHandler("Invalid order data", 400);
+    }
+
+    const operations = orders.map(({ categoryId, order }) => ({
+        updateOne: {
+            filter: { _id: categoryId },
+            update: { $set: { displayOrder: order } },
+        },
+    }));
+
+    await Category.bulkWrite(operations);
+
+    res.status(200).json({
+        success: true,
+        message: "Category order saved successfully",
+    });
 });
 
 export const deleteCategory = asyncHandler(async (req, res) => {
