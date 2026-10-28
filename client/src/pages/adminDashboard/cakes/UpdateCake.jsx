@@ -4,7 +4,6 @@ import {
     ImagePlus,
     Loader2,
     Package,
-    Tag,
     Upload,
     X,
 } from "lucide-react";
@@ -29,29 +28,6 @@ import { Textarea } from "@/components/ui/textarea";
 import useGet from "@/hooks/useGet";
 import usePut from "@/hooks/usePut";
 import { normalizeFlavors } from "@/utils/flavor";
-
-const availableTags = [
-    "birthday",
-    "wedding",
-    "anniversary",
-    "celebration",
-    "gift",
-    "kids",
-    "premium",
-    "luxury",
-    "bestseller",
-    "new",
-    "party",
-    "family",
-    "romantic",
-    "elegant",
-    "special-occasion",
-    "dessert",
-    "sweet",
-    "custom",
-    "popular",
-    "festive",
-];
 
 const flavors = [
     { value: "chocolate", label: "Chocolate" },
@@ -124,8 +100,6 @@ const cakeSchema = z.object({
 
     stock: z.string().trim().regex(/^\d+$/, "Stock must be a whole number"),
 
-    tags: z.array(z.string()).max(3, "You can select up to 3 tags"),
-
     images: z.array(z.instanceof(File)).max(5, "Maximum 5 images allowed"),
 });
 
@@ -167,13 +141,13 @@ export default function UpdateCake() {
             price: "",
             discountPercentage: "0",
             stock: "0",
-            tags: [],
+
             images: [],
         },
     });
 
     const selectedImages = watch("images") || [];
-    const selectedTags = watch("tags") || [];
+
     const selectedFlavors = watch("flavor") || [];
 
     const {
@@ -210,8 +184,6 @@ export default function UpdateCake() {
             return;
         }
 
-        const cakeTags = Array.isArray(cake.tags) ? cake.tags : [];
-
         const categoryId =
             typeof cake.category === "object"
                 ? cake.category?._id || ""
@@ -245,8 +217,6 @@ export default function UpdateCake() {
                 cake.stock !== undefined && cake.stock !== null
                     ? String(cake.stock)
                     : "0",
-
-            tags: cakeTags.slice(0, 3),
 
             images: [],
         });
@@ -368,31 +338,6 @@ export default function UpdateCake() {
         );
     };
 
-    const toggleTag = (tag) => {
-        if (selectedTags.includes(tag)) {
-            setValue(
-                "tags",
-                selectedTags.filter((item) => item !== tag),
-                {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                },
-            );
-
-            return;
-        }
-
-        if (selectedTags.length >= 3) {
-            toast.error("You can select up to 3 tags");
-            return;
-        }
-
-        setValue("tags", [...selectedTags, tag], {
-            shouldDirty: true,
-            shouldValidate: true,
-        });
-    };
-
     const handleFlavorChange = (flavor) => {
         if (selectedFlavors.includes(flavor)) {
             setValue(
@@ -437,8 +382,6 @@ export default function UpdateCake() {
         formData.append("discountPercentage", values.discountPercentage || "0");
 
         formData.append("stock", values.stock);
-
-        formData.append("tags", values.tags.join(","));
 
         values.images.forEach((file) => {
             formData.append("images", file);
@@ -509,7 +452,6 @@ export default function UpdateCake() {
 
     return (
         <div className="mx-auto w-full max-w-7xl space-y-6 pb-10">
-
             <div className="flex items-center gap-4">
                 <Button
                     asChild
@@ -537,7 +479,6 @@ export default function UpdateCake() {
                 onSubmit={handleSubmit(onSubmit, onInvalid)}
                 className="space-y-6"
             >
-
                 <div className={`${sectionClasses} overflow-hidden`}>
                     <div className="border-b p-6">
                         <div className="flex items-center gap-3">
@@ -559,7 +500,6 @@ export default function UpdateCake() {
                     </div>
 
                     <div className="grid gap-6 p-6 lg:grid-cols-2">
-
                         <div className="space-y-2">
                             <Label htmlFor="nameEn">English Cake Name</Label>
 
@@ -701,9 +641,11 @@ export default function UpdateCake() {
                                             onClick={() =>
                                                 handleFlavorChange(flavor.value)
                                             }
-                                            className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${isSelected
-                                                ? "border-primary bg-primary text-primary-foreground"
-                                                : "bg-background hover:bg-muted"}`}
+                                            className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                                                isSelected
+                                                    ? "border-primary bg-primary text-primary-foreground"
+                                                    : "bg-background hover:bg-muted"
+                                            }`}
                                         >
                                             {flavor.label}
                                         </button>
@@ -847,7 +789,6 @@ export default function UpdateCake() {
                         />
 
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-
                             {existingImages.map((image, index) => (
                                 <div
                                     key={image.id || `existing-${index}`}
@@ -938,57 +879,6 @@ export default function UpdateCake() {
                         {errors.images && (
                             <p className="mt-2 text-sm text-destructive">
                                 {errors.images.message}
-                            </p>
-                        )}
-                    </div>
-                </div>
-
-                <div className={`${sectionClasses} overflow-hidden`}>
-                    <div className="border-b p-6">
-                        <div className="flex items-center gap-3">
-                            <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10">
-                                <Tag className="size-5 text-primary" />
-                            </div>
-
-                            <div>
-                                <h2 className="font-semibold">SEO Tags</h2>
-
-                                <p className="mt-1 text-sm text-muted-foreground">
-                                    Select up to 3 tags that describe this cake.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="p-6">
-                        <div className="flex flex-wrap gap-2">
-                            {availableTags.map((tag) => {
-                                const isSelected = selectedTags.includes(tag);
-
-                                return (
-                                    <button
-                                        key={tag}
-                                        type="button"
-                                        onClick={() => toggleTag(tag)}
-                                        className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-                                            isSelected
-                                                ? "border-primary bg-primary text-primary-foreground"
-                                                : "bg-background hover:bg-muted"
-                                        }`}
-                                    >
-                                        {tag}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        <p className="mt-4 text-xs text-muted-foreground">
-                            {selectedTags.length} of 3 tags selected
-                        </p>
-
-                        {errors.tags && (
-                            <p className="mt-2 text-sm text-destructive">
-                                {errors.tags.message}
                             </p>
                         )}
                     </div>

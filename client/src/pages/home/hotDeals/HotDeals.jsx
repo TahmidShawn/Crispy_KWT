@@ -1,3 +1,4 @@
+
 import { Flame, Tag, Plus } from "lucide-react";
 import { Link } from "react-router";
 
@@ -107,7 +108,7 @@ const HotDeals = () => {
                         </p>
                     </div>
 
-                    {/* Deal count and shop link */}
+                    {/* Deal count */}
                     <div className="flex items-center justify-between gap-4 self-stretch md:self-auto">
                         <div className="flex items-center gap-3">
                             <span className="font-display text-5xl font-semibold leading-none text-primary md:text-6xl">
@@ -126,8 +127,6 @@ const HotDeals = () => {
                                 </span>
                             </div>
                         </div>
-
-                       
                     </div>
                 </div>
 
@@ -161,7 +160,7 @@ const HotDeals = () => {
                                             src={image}
                                             alt={getName(cake)}
                                             loading="lazy"
-                                            className="size-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                            className="size-full object-cover transition-transform duration-500 group-hover:scale-125"
                                         />
                                     ) : (
                                         <div className="flex size-full items-center justify-center">
@@ -193,7 +192,7 @@ const HotDeals = () => {
                                         </Link>
 
                                         <div className="mb-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                                            <span className="text-sm font-bold text-cream md:text-base">
+                                            <span className="text-lg font-bold text-cream md:text-xl">
                                                 {formatPrice(discountedPrice)}
                                             </span>
 
@@ -202,12 +201,12 @@ const HotDeals = () => {
                                             </span>
                                         </div>
 
-                                        <Link
-                                            to={`/cake/${cake.slug}`}
-                                            className="pointer-events-auto inline-flex items-center border border-cream/40 bg-cream px-2.5 py-1.5 text-[10px] font-medium uppercase tracking-[0.12em] text-primary transition-colors duration-200 hover:bg-transparent hover:text-cream"
+                                        <h2
+                                            
+                                            className="pointer-events-auto inline-flex items-center border border-cream/40 bg-cream px-2.5 py-2 text-[10px] font-medium uppercase tracking-[0.12em] text-primary transition-colors"
                                         >
                                             {getCategoryName(cake)}
-                                        </Link>
+                                        </h2>
                                     </div>
 
                                     {/* Add to cart button */}
@@ -226,7 +225,7 @@ const HotDeals = () => {
                                         onClick={(event) =>
                                             handleAddToCart(event, cake)
                                         }
-                                        className="pointer-events-auto grid size-9 shrink-0 place-items-center border border-white/45 bg-white/5 text-white transition-colors duration-200 hover:bg-cream hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream"
+                                        className="pointer-events-auto cursor-pointer grid size-9 shrink-0 place-items-center border border-white/45 bg-white/5 text-white transition-colors duration-200 hover:bg-cream hover:text-primary group-hover:bg-cream group-hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream"
                                     >
                                         <Plus className="size-5" />
                                     </button>

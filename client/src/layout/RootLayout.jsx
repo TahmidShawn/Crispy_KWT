@@ -1,4 +1,5 @@
 import BottomBar from "@/components/shared/bottomBar/BottomBar";
+import Footer from "@/components/shared/footer/Footer";
 import Navbar from "@/components/shared/navbar/Navbar";
 import { Outlet, useLocation } from "react-router";
 
@@ -18,6 +19,7 @@ const RootLayout = () => {
                 className="h-[calc(4rem+env(safe-area-inset-bottom))] md:hidden"
                 aria-hidden="true"
             />
+            <Footer />
             <BottomBar />
         </div>
     );
