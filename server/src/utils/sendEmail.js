@@ -21,11 +21,22 @@ const sendEmail = async (options) => {
         });
 
         if (error) {
-            throw new Error(error.message || "Resend API returned an error");
+            // Don't throw here - return error status instead
+            // This allows registration to succeed even if email fails
+            logger.error(
+                { err: error, to: options.email, subject: options.subject },
+                "Failed to send verification email"
+            );
+            return { success: false, error: error.message };
         }
+
+        return { success: true };
     } catch (error) {
-        logger.error({ err: error, to: options.email }, "Failed to send email");
-        throw error;
+        logger.error(
+            { err: error, to: options.email, subject: options.subject },
+            "Failed to send verification email"
+        );
+        return { success: false, error: error.message };
     }
 };
 
