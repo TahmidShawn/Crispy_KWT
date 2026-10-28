@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import useGet from "@/hooks/useGet";
-import { formatFlavorList, normalizeFlavors } from "@/utils/flavor";
+import { normalizeFlavors } from "@/utils/flavor";
 
 export default function Cakes() {
     const [search, setSearch] = useState("");
@@ -81,9 +81,7 @@ export default function Cakes() {
             cake.name?.en?.toLowerCase().includes(searchValue) ||
             cake.name?.ar?.toLowerCase().includes(searchValue) ||
             cake.category?.name?.en?.toLowerCase().includes(searchValue) ||
-            flavors.some((flavor) =>
-                flavor.toLowerCase().includes(searchValue),
-            )
+            flavors.some((flavor) => flavor.toLowerCase().includes(searchValue))
         );
     });
 
@@ -109,7 +107,6 @@ export default function Cakes() {
     return (
         <>
             <div className="space-y-8">
-                
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h1 className="text-2xl font-semibold tracking-tight">
@@ -132,7 +129,6 @@ export default function Cakes() {
                     </Button>
                 </div>
 
-                
                 <div className="rounded-2xl border bg-background p-5">
                     <div className="relative max-w-md bg-card">
                         <Search className="absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -146,13 +142,12 @@ export default function Cakes() {
                     </div>
                 </div>
 
-                
                 <div className="overflow-hidden rounded-2xl border bg-card">
                     <div className="overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent">
-                                    <TableHead className="h-12 w-[90px] px-5">
+                                    <TableHead className="h-12 w-22.5 px-5">
                                         Image
                                     </TableHead>
 
@@ -162,10 +157,6 @@ export default function Cakes() {
 
                                     <TableHead className="h-12 px-5">
                                         Category
-                                    </TableHead>
-
-                                    <TableHead className="h-12 px-5">
-                                        Flavor
                                     </TableHead>
 
                                     <TableHead className="h-12 px-5">
@@ -220,7 +211,6 @@ export default function Cakes() {
                                                 key={cake._id}
                                                 className="hover:bg-muted/30"
                                             >
-                                                
                                                 <TableCell className="px-5 py-4">
                                                     <div className="flex size-14 items-center justify-center overflow-hidden rounded-xl border bg-muted">
                                                         {imageUrl ? (
@@ -239,7 +229,6 @@ export default function Cakes() {
                                                     </div>
                                                 </TableCell>
 
-                                                
                                                 <TableCell className="px-5 py-4">
                                                     <div className="max-w-55">
                                                         <p className="truncate font-medium">
@@ -249,7 +238,6 @@ export default function Cakes() {
                                                     </div>
                                                 </TableCell>
 
-                                                
                                                 <TableCell className="px-5 py-4">
                                                     <span className="text-sm">
                                                         {cake.category?.name
@@ -257,23 +245,12 @@ export default function Cakes() {
                                                     </span>
                                                 </TableCell>
 
-                                                
-                                                <TableCell className="px-5 py-4">
-                                                    <span className="text-sm capitalize">
-                                                        {formatFlavorList(
-                                                            cake.flavor,
-                                                        ) || "—"}
-                                                    </span>
-                                                </TableCell>
-
-                                                
                                                 <TableCell className="px-5 py-4">
                                                     <span className="text-sm capitalize">
                                                         {cake.weightSize || "—"}
                                                     </span>
                                                 </TableCell>
 
-                                                
                                                 <TableCell className="px-5 py-4">
                                                     <span className="whitespace-nowrap text-sm font-medium">
                                                         {cake.price != null
@@ -284,7 +261,6 @@ export default function Cakes() {
                                                     </span>
                                                 </TableCell>
 
-                                                
                                                 <TableCell className="px-5 py-4">
                                                     <span
                                                         className={
@@ -298,7 +274,6 @@ export default function Cakes() {
                                                     </span>
                                                 </TableCell>
 
-                                                
                                                 <TableCell className="px-5 py-4">
                                                     <span
                                                         className={
@@ -313,12 +288,11 @@ export default function Cakes() {
                                                     </span>
                                                 </TableCell>
 
-                                                
                                                 <TableCell className="px-5 py-4">
                                                     <div className="flex justify-end gap-2">
                                                         <Link
                                                             to={`/admin/cakes/${cake._id}`}
-                                                            className="inline-flex size-10 items-center justify-center rounded-tl-xl rounded-br-xl border border-input bg-background transition-colors hover:bg-accent hover:text-accent-foreground"
+                                                            className="inline-flex size-10 items-center justify-center rounded-lg border border-input bg-background transition-colors hover:bg-accent hover:text-accent-foreground"
                                                             aria-label={`Edit ${
                                                                 cake.name?.en ||
                                                                 "cake"
@@ -343,7 +317,7 @@ export default function Cakes() {
                                                                 cake.name?.en ||
                                                                 "cake"
                                                             }`}
-                                                            className="size-10 rounded-tl-xl rounded-br-xl text-destructive cursor-pointer hover:text-white hover:bg-red-500"
+                                                            className="size-10 rounded-lg  cursor-pointer text-white bg-primary hover:bg-red-500 hover:text-white" 
                                                         >
                                                             <Trash2 className="size-4" />
                                                         </Button>
@@ -358,7 +332,6 @@ export default function Cakes() {
                     </div>
                 </div>
 
-                
                 {!isLoading && cakes.length > 0 && (
                     <div className="mt-10 flex items-center justify-center gap-2">
                         <Button
@@ -379,7 +352,7 @@ export default function Cakes() {
                             size="sm"
                             onClick={() =>
                                 setPage((prev) =>
-                                    Math.min(prev + 1, pagination?.pages ?? 1)
+                                    Math.min(prev + 1, pagination?.pages ?? 1),
                                 )
                             }
                             disabled={page >= (pagination?.pages ?? 1)}
@@ -391,14 +364,12 @@ export default function Cakes() {
 
                 {!isLoading && cakes.length > 0 && (
                     <p className="text-sm text-muted-foreground">
-                        Showing {filteredCakes.length} of {
-                            pagination?.total ?? cakes.length
-                        } cakes
+                        Showing {filteredCakes.length} of{" "}
+                        {pagination?.total ?? cakes.length} cakes
                     </p>
                 )}
             </div>
 
-            
             <AlertDialog
                 open={!!cakeToDelete}
                 onOpenChange={(open) => {

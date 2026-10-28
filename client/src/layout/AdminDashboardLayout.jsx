@@ -89,7 +89,7 @@ const SidebarContent = memo(({ onNavigate }) => {
                     onClick={onNavigate}
                     className="flex items-center gap-3"
                 >
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-tl-2xl rounded-br-2xl bg-primary text-primary-foreground">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                         <Cake className="size-5" />
                     </div>
 

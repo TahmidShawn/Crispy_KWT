@@ -24,29 +24,6 @@ import usePost from "@/hooks/usePost";
 
 const MAX_IMAGES = 5;
 
-const availableTags = [
-    "birthday",
-    "wedding",
-    "anniversary",
-    "celebration",
-    "gift",
-    "kids",
-    "premium",
-    "luxury",
-    "bestseller",
-    "new",
-    "party",
-    "family",
-    "romantic",
-    "elegant",
-    "special-occasion",
-    "dessert",
-    "sweet",
-    "custom",
-    "popular",
-    "festive",
-];
-
 const flavors = [
     { value: "chocolate", label: "Chocolate" },
     { value: "vanilla", label: "Vanilla" },
@@ -111,8 +88,6 @@ const cakeSchema = z.object({
 
     stock: z.string().regex(/^\d+$/, "Stock must be a valid integer"),
 
-    tags: z.array(z.string()).max(3, "You can select up to 3 tags"),
-
     images: z
         .array(z.instanceof(File))
         .min(1, "At least one cake image is required"),
@@ -146,7 +121,7 @@ export default function AddCakes() {
             price: "",
             discountPercentage: "0",
             stock: "",
-            tags: [],
+
             images: [],
         },
     });
@@ -154,7 +129,7 @@ export default function AddCakes() {
     const nameEn = watch("nameEn");
     const descriptionEn = watch("descriptionEn");
     const images = watch("images");
-    const selectedTags = watch("tags");
+
     const selectedFlavors = watch("flavor") || [];
 
     const { data: categoriesResponse, isPending: isCategoriesLoading } = useGet(
@@ -348,33 +323,6 @@ export default function AddCakes() {
         });
     };
 
-    const handleTagChange = (tag) => {
-        const currentTags = selectedTags || [];
-
-        if (currentTags.includes(tag)) {
-            setValue(
-                "tags",
-                currentTags.filter((item) => item !== tag),
-                {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                },
-            );
-
-            return;
-        }
-
-        if (currentTags.length >= 3) {
-            toast.error("Maximum 3 SEO tags allowed");
-            return;
-        }
-
-        setValue("tags", [...currentTags, tag], {
-            shouldDirty: true,
-            shouldValidate: true,
-        });
-    };
-
     const handleFlavorChange = (flavor) => {
         const currentFlavors = selectedFlavors || [];
 
@@ -416,10 +364,6 @@ export default function AddCakes() {
         data.append("price", formData.price);
         data.append("discountPercentage", formData.discountPercentage || "0");
         data.append("stock", formData.stock);
-
-        if (formData.tags.length) {
-            data.append("tags", formData.tags.join(","));
-        }
 
         formData.images.forEach((file) => {
             data.append("images", file);
@@ -786,9 +730,11 @@ export default function AddCakes() {
                                             onClick={() =>
                                                 handleFlavorChange(flavor.value)
                                             }
-                                            className={`rounded-full border px-4 py-2 text-sm font-medium transition ${isSelected
-                                                ? "border-primary bg-primary text-primary-foreground"
-                                                : "border-border bg-background hover:bg-muted"}`}
+                                            className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+                                                isSelected
+                                                    ? "border-primary bg-primary text-primary-foreground"
+                                                    : "border-border bg-background hover:bg-muted"
+                                            }`}
                                         >
                                             {flavor.label}
                                         </button>
@@ -928,54 +874,6 @@ export default function AddCakes() {
                     </div>
                 </section>
 
-                <section className={sectionClasses}>
-                    <div className="border-b p-6">
-                        <div className="flex items-center justify-between gap-4">
-                            <div>
-                                <h2 className="font-semibold">SEO Tags</h2>
-
-                                <p className="text-sm text-muted-foreground">
-                                    Select up to 3 tags for better product
-                                    discovery.
-                                </p>
-                            </div>
-
-                            <span className="shrink-0 rounded-full bg-muted px-3 py-1 text-xs font-medium">
-                                {selectedTags.length}/3
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className="p-6">
-                        <div className="flex flex-wrap gap-2">
-                            {availableTags.map((tag) => {
-                                const isSelected = selectedTags.includes(tag);
-
-                                return (
-                                    <button
-                                        key={tag}
-                                        type="button"
-                                        onClick={() => handleTagChange(tag)}
-                                        className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                                            isSelected
-                                                ? "border-primary bg-primary text-primary-foreground"
-                                                : "border-border bg-background hover:bg-muted"
-                                        }`}
-                                    >
-                                        {tag}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        {errors.tags && (
-                            <p className="mt-2 text-sm text-destructive">
-                                {errors.tags.message}
-                            </p>
-                        )}
-                    </div>
-                </section>
-
                 <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
                     <Button
                         type="button"
@@ -989,7 +887,6 @@ export default function AddCakes() {
 
                     <Button
                         type="submit"
-                        variant="asymmetric"
                         className="h-12 px-8"
                         disabled={isSubmitting}
                     >
