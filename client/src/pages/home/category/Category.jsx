@@ -127,7 +127,7 @@ const Category = () => {
                                         {getName(cat)}
                                     </h3>
                                     <p className="w-fit bg-cream  border border-cream/40 px-2.5 py-1.5 text-[10px] uppercase tracking-[0.12em] text-primary font-medium">
-                                        {cat.total_cakes ?? 0}{" "}
+                                        {cat.cakeCount ?? 0}{" "}
                                         {isArabic ? "كعكة" : "cakes"}
                                     </p>
                                 </div>
