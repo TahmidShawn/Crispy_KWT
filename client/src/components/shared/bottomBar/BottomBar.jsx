@@ -4,7 +4,6 @@ import {
     LayoutGrid,
     LogOut,
     Package,
-    ShoppingBag,
     User,
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
@@ -60,7 +59,7 @@ const BottomBar = () => {
         }`;
 
     const linkClass =
-        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-primary transition-colors active:bg-secondary active:text-primary";
+        "flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium text-ink transition-colors focus:bg-blush focus:text-ink active:bg-blush";
 
     return (
         <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-white/20 bg-transparent pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(144,24,92,0.25)] backdrop-blur-md md:hidden">
@@ -162,7 +161,7 @@ const BottomBar = () => {
                             side="top"
                             align="end"
                             sideOffset={12}
-                            className="w-56 rounded-2xl border-secondary bg-secondary p-2 shadow-xl shadow-primary/20"
+                            className="w-56 border-ink/10 bg-white text-ink shadow-md rounded-lg p-1"
                         >
                             <div className="flex items-center gap-3 rounded-xl bg-secondary p-3">
                                 <div className="flex size-9 shrink-0 items-center justify-center rounded-none rounded-tl-xl rounded-br-xl bg-primary text-primary-foreground shadow-md shadow-primary/30">
@@ -183,13 +182,6 @@ const BottomBar = () => {
                             </div>
 
                             <div className="mt-2 space-y-1">
-                                {isCustomer && (
-                                    <Link to="/cart" className={linkClass}>
-                                        <ShoppingBag className="size-4" />
-                                        {isArabic ? "السلة" : "Cart"}
-                                    </Link>
-                                )}
-
                                 <Link
                                     to={isAdmin ? "/admin" : "/dashboard"}
                                     className={linkClass}
@@ -208,7 +200,7 @@ const BottomBar = () => {
                                     type="button"
                                     disabled={isLoggingOut}
                                     onClick={() => logoutUser()}
-                                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-primary transition-colors active:bg-primary active:text-primary disabled:pointer-events-none disabled:opacity-50"
+                                    className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium text-primary transition-colors focus:bg-blush focus:text-primary active:bg-blush disabled:pointer-events-none disabled:opacity-50"
                                 >
                                     <LogOut className="size-4" />
                                     {isLoggingOut

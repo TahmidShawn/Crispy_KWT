@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LanguageProvider } from "./context/LanguageContext";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import Router from "./router/Router";
 import AuthProvider from "./context/AuthProvider";
 const queryClient = new QueryClient({
@@ -20,11 +21,13 @@ createRoot(document.getElementById("root")).render(
     <StrictMode>
         <BrowserRouter>
             <QueryClientProvider client={queryClient}>
-                <LanguageProvider>
-                    <AuthProvider>
-                        <Router />
-                    </AuthProvider>
-                </LanguageProvider>
+                <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+                    <LanguageProvider>
+                        <AuthProvider>
+                            <Router />
+                        </AuthProvider>
+                    </LanguageProvider>
+                </GoogleOAuthProvider>
             </QueryClientProvider>
         </BrowserRouter>
     </StrictMode>,
