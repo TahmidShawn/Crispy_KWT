@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo, useCallback } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
 import {
     Bell,
@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import {
     Collapsible,
     CollapsibleContent,
@@ -71,7 +70,7 @@ const simpleNavigation = [
     },
 ];
 
-function SidebarContent({ onNavigate }) {
+const SidebarContent = memo(({ onNavigate }) => {
     const location = useLocation();
 
     const isGroupActive = (items) =>
@@ -96,7 +95,7 @@ function SidebarContent({ onNavigate }) {
 
                     <div className="flex flex-col">
                         <span className="font-semibold leading-none tracking-tight">
-                            Crown Kwt
+                            Crispy KWT
                         </span>
 
                         <span className="mt-1 text-xs text-muted-foreground">
@@ -208,7 +207,9 @@ function SidebarContent({ onNavigate }) {
 
             <div className="border-t p-3">
                 <div className="rounded-xl bg-muted/60 p-3">
-                    <p className="text-xs font-medium">Crown Kwt Admin</p>
+                    <p className="text-xs font-medium">
+                            Crispy KWT Admin
+                        </p>
 
                     <p className="mt-1 text-xs text-muted-foreground">
                         Manage your store
@@ -217,10 +218,14 @@ function SidebarContent({ onNavigate }) {
             </div>
         </div>
     );
-}
+});
 
 export default function AdminDashboardLayout() {
     const [mobileOpen, setMobileOpen] = useState(false);
+
+    const handleNavigate = useCallback(() => {
+        setMobileOpen(false);
+    }, []);
 
     return (
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -230,7 +235,7 @@ export default function AdminDashboardLayout() {
                 </aside>
 
                 <SheetContent side="left" className="w-72 p-0">
-                    <SidebarContent onNavigate={() => setMobileOpen(false)} />
+                    <SidebarContent onNavigate={handleNavigate} />
                 </SheetContent>
 
                 <div className="min-h-screen lg:pl-64">
@@ -253,7 +258,7 @@ export default function AdminDashboardLayout() {
                                 </h1>
 
                                 <p className="hidden text-xs text-muted-foreground sm:block">
-                                    Manage your Crown Kwt store
+                                    Manage your Crispy KWT store
                                 </p>
                             </div>
                         </div>
@@ -268,8 +273,6 @@ export default function AdminDashboardLayout() {
 
                                 <span className="absolute right-2 top-2 size-2 rounded-full bg-primary" />
                             </Button>
-
-                            <ThemeToggle />
                         </div>
                     </header>
 

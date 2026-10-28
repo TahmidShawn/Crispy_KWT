@@ -68,7 +68,7 @@ export default function AdminDashboard() {
                 </h2>
 
                 <p className="mt-1 text-sm text-muted-foreground">
-                    Overview of your Crown Kwt store.
+                    Overview of your Crispy KWT store.
                 </p>
             </div>
 
