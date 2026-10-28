@@ -58,7 +58,11 @@ const cakeSchema = new mongoose.Schema(
             required: [true, "Please select at least one cake flavor"],
             validate: {
                 validator: function (flavors) {
-                    return Array.isArray(flavors) && flavors.length >= 1 && flavors.length <= 5;
+                    return (
+                        Array.isArray(flavors) &&
+                        flavors.length >= 1 &&
+                        flavors.length <= 5
+                    );
                 },
                 message: "Please select between 1 and 5 cake flavors",
             },
@@ -119,7 +123,6 @@ const cakeSchema = new mongoose.Schema(
         numReviews: { type: Number, default: 0 },
         salesCount: { type: Number, default: 0 },
         createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        tags: [String],
     },
     {
         timestamps: true,

@@ -64,7 +64,8 @@ const parseFlavorCsv = (value) =>
     value
         .split(",")
         .map((flavor) => flavor.trim())
-        .filter(Boolean);
+        .filter(Boolean);
+
 const flavorCsv = z
     .string({ error: "Flavor is required" })
     .trim()
@@ -136,18 +137,6 @@ export const createCakeSchema = z.object({
     isFeatured: booleanField,
 
     isActive: booleanField,
-
-    tags: z
-        .string()
-        .optional()
-        .transform((value) => {
-            if (!value) return undefined;
-
-            return value
-                .split(",")
-                .map((tag) => tag.trim())
-                .filter(Boolean);
-        }),
 });
 
 export const updateCakeSchema = z.object({
@@ -196,16 +185,4 @@ export const updateCakeSchema = z.object({
     isFeatured: booleanField,
 
     isActive: booleanField,
-
-    tags: z
-        .string()
-        .optional()
-        .transform((value) => {
-            if (!value) return undefined;
-
-            return value
-                .split(",")
-                .map((tag) => tag.trim())
-                .filter(Boolean);
-        }),
 });

@@ -41,26 +41,6 @@ const deleteCakeImages = async (images) => {
     );
 };
 
-const parseTags = (tags) => {
-    if (!tags) return [];
-
-    if (Array.isArray(tags)) {
-        return tags
-            .flatMap((tag) => (typeof tag === "string" ? tag.split(",") : []))
-            .map((tag) => tag.trim())
-            .filter(Boolean);
-    }
-
-    if (typeof tags === "string") {
-        return tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter(Boolean);
-    }
-
-    return [];
-};
-
 const parseFlavors = (flavors) => {
     if (!flavors) return [];
 
@@ -80,7 +60,6 @@ const parseFlavors = (flavors) => {
 
     return [];
 };
-
 
 const discountedPriceExpression = {
     $round: [
@@ -106,7 +85,6 @@ const discountedPriceExpression = {
     ],
 };
 
-
 const formatCakePrices = (cake) => {
     if (cake.price !== undefined) {
         cake.price = Number(cake.price).toFixed(3);
@@ -118,7 +96,6 @@ const formatCakePrices = (cake) => {
 
     return cake;
 };
-
 
 const formatCakeFlavors = (cake) => {
     cake.flavor = parseFlavors(cake.flavor);
@@ -141,7 +118,6 @@ export const createCake = asyncHandler(async (req, res) => {
         isCustomAvailable,
         isFeatured,
         isActive,
-        tags,
     } = req.body;
 
     const files = req.files;
@@ -166,7 +142,6 @@ export const createCake = asyncHandler(async (req, res) => {
 
     const images = await uploadCakeImages(files);
 
-    const parsedTags = parseTags(tags);
     const parsedFlavors = parseFlavors(flavor);
 
     try {
@@ -189,7 +164,7 @@ export const createCake = asyncHandler(async (req, res) => {
             isCustomAvailable,
             isFeatured,
             isActive,
-            tags: parsedTags,
+
             createdBy: req.user?._id,
         });
 
@@ -207,12 +182,20 @@ export const createCake = asyncHandler(async (req, res) => {
 });
 
 export const getCakes = asyncHandler(async (req, res) => {
-    const { category, price, size, sort = "featured", limit, search, page } =
-        req.query;
+    const {
+        category,
+        price,
+        size,
+        sort = "featured",
+        limit,
+        search,
+        page,
+    } = req.query;
 
     const filter = {
         isActive: true,
-    };
+    };
+
     if (search && String(search).trim()) {
         const term = String(search).trim();
 
@@ -220,7 +203,8 @@ export const getCakes = asyncHandler(async (req, res) => {
             { "name.en": { $regex: term, $options: "i" } },
             { "name.ar": { $regex: term, $options: "i" } },
         ];
-    }
+    }
+
     if (category) {
         const existingCategory = await Category.findOne({
             slug: category,
@@ -232,7 +216,8 @@ export const getCakes = asyncHandler(async (req, res) => {
         }
 
         filter.category = existingCategory._id;
-    }
+    }
+
     let priceFilter;
 
     if (price) {
@@ -246,7 +231,8 @@ export const getCakes = asyncHandler(async (req, res) => {
             $gte: min,
             $lte: max,
         };
-    }
+    }
+
     if (size) {
         const sizes = size
             .split(",")
@@ -268,10 +254,12 @@ export const getCakes = asyncHandler(async (req, res) => {
                 $in: sizes,
             };
         }
-    }
+    }
+
     const pageNum = Math.max(parseInt(page, 10) || 1, 1);
     const limitNum = Math.min(Math.max(parseInt(limit, 10) || 10, 1), 100);
-    const skip = (pageNum - 1) * limitNum;
+    const skip = (pageNum - 1) * limitNum;
+
     let sortOption = {
         createdAt: -1,
     };
@@ -452,7 +440,6 @@ export const updateCake = asyncHandler(async (req, res) => {
         isCustomAvailable,
         isFeatured,
         isActive,
-        tags,
     } = req.body;
 
     const cake = await Cake.findById(id);
@@ -548,10 +535,6 @@ export const updateCake = asyncHandler(async (req, res) => {
         updateData.isActive = isActive;
     }
 
-    if (tags !== undefined) {
-        updateData.tags = parseTags(tags);
-    }
-
     let newImages;
 
     if (req.files?.length) {
@@ -569,7 +552,6 @@ export const updateCake = asyncHandler(async (req, res) => {
             throw new ErrorHandler("Cake not found", 404);
         }
 
-        
         if (newImages) {
             await deleteCakeImages(cake.images);
         }
@@ -580,7 +562,6 @@ export const updateCake = asyncHandler(async (req, res) => {
             data: updatedCake,
         });
     } catch (error) {
-        
         if (newImages) {
             await deleteCakeImages(newImages);
         }
@@ -619,7 +600,8 @@ export const getAdminCakes = asyncHandler(async (req, res) => {
         limit = 20,
     } = req.query;
 
-    const filter = {};
+    const filter = {};
+
     if (search) {
         filter.$or = [
             {
@@ -635,7 +617,8 @@ export const getAdminCakes = asyncHandler(async (req, res) => {
                 },
             },
         ];
-    }
+    }
+
     if (category) {
         const existingCategory = await Category.findOne({
             slug: category,
@@ -646,10 +629,12 @@ export const getAdminCakes = asyncHandler(async (req, res) => {
         }
 
         filter.category = existingCategory._id;
-    }
+    }
+
     if (isActive !== undefined) {
         filter.isActive = isActive === "true";
-    }
+    }
+
     if (isFeatured !== undefined) {
         filter.isFeatured = isFeatured === "true";
     }
@@ -657,7 +642,8 @@ export const getAdminCakes = asyncHandler(async (req, res) => {
     const pageNum = Math.max(parseInt(page, 10) || 1, 1);
     const limitNum = Math.min(Math.max(parseInt(limit, 10) || 20, 1), 100);
 
-    const skip = (pageNum - 1) * limitNum;
+    const skip = (pageNum - 1) * limitNum;
+
     let sortOption = {
         createdAt: -1,
     };
@@ -784,7 +770,11 @@ export const updateCakeOrder = asyncHandler(async (req, res) => {
 
     try {
         for (let i = 0; i < cakeIds.length; i++) {
-            await Cake.findByIdAndUpdate(cakeIds[i], { displayOrder: i }, { new: true, runValidators: true });
+            await Cake.findByIdAndUpdate(
+                cakeIds[i],
+                { displayOrder: i },
+                { new: true, runValidators: true },
+            );
         }
 
         res.status(200).json({
