@@ -11,7 +11,7 @@ const RootLayout = () => {
         <div className="flex min-h-screen flex-col">
             <Navbar />
 
-            <main className={`flex-1 ${isHome ? "" : "pt-16 sm:pt-17"}`}>
+            <main className={`flex-1 ${isHome ? "" : "pt-8"}`}>
                 <Outlet />
             </main>
 

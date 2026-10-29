@@ -1,4 +1,3 @@
-
 import { Flame, Tag, Plus } from "lucide-react";
 import { Link } from "react-router";
 
@@ -6,33 +5,57 @@ import { useLanguage } from "@/context/LanguageContext";
 import useGet from "@/hooks/useGet";
 import useAddToCart from "@/hooks/useAddToCart";
 
-const HotDeals = () => {
+const HotDeals = ({
+    eyebrow,
+    title,
+    subtitle,
+    limit = 8,
+    excludeCakeId,
+}) => {
     const { language, t } = useLanguage();
     const isArabic = language === "ar";
-
     const { addToCart } = useAddToCart();
+
+    // Custom headings enable recommendation mode.
+    const isRecommendation = Boolean(eyebrow || title || subtitle);
 
     const {
         data: cakesResponse,
         isLoading,
         error,
     } = useGet({
-        url: "/cakes?sort=discount&limit=8",
-        queryKey: ["hot-deals"],
+        url: isRecommendation
+            ? `/cakes?limit=${limit}`
+            : "/cakes?sort=discount&limit=8",
+        queryKey: [
+            isRecommendation ? "suggested-cakes" : "hot-deals",
+            limit,
+        ],
     });
 
     const cakes = (cakesResponse?.data ?? [])
-        .filter(
-            (cake) =>
-                Number(cake.discountPercentage) > 0 &&
-                Number(cake.stock) > 0,
-        )
-        .sort(
-            (a, b) =>
+        .filter((cake) => {
+            const isAvailable = Number(cake.stock) > 0;
+            const isNotExcluded = cake._id !== excludeCakeId;
+
+            if (isRecommendation) {
+                return isAvailable && isNotExcluded;
+            }
+
+            return (
+                isAvailable &&
+                Number(cake.discountPercentage) > 0
+            );
+        })
+        .sort((a, b) => {
+            if (isRecommendation) return 0;
+
+            return (
                 Number(b.discountPercentage) -
-                Number(a.discountPercentage),
-        )
-        .slice(0, 8);
+                Number(a.discountPercentage)
+            );
+        })
+        .slice(0, isRecommendation ? limit : 8);
 
     const getName = (cake) =>
         cake.name?.[language] || cake.name?.en || "";
@@ -62,7 +85,9 @@ const HotDeals = () => {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 md:gap-[18px] lg:grid-cols-4">
-                        {Array.from({ length: 8 }).map((_, index) => (
+                        {Array.from({
+                            length: Math.min(limit, 8),
+                        }).map((_, index) => (
                             <div
                                 key={index}
                                 className="h-[290px] animate-pulse rounded-[14px] bg-ink/10 md:h-[340px]"
@@ -78,6 +103,25 @@ const HotDeals = () => {
         return null;
     }
 
+    const sectionEyebrow =
+        eyebrow ||
+        t?.hotDeals?.eyebrow ||
+        (isArabic
+            ? "عروض لفترة محدودة"
+            : "Special prices, sweeter moments");
+
+    const sectionTitle =
+        title ||
+        t?.hotDeals?.heading ||
+        (isArabic ? "أفضل العروض" : "Hot Deals");
+
+    const sectionSubtitle =
+        subtitle ||
+        t?.hotDeals?.subheading ||
+        (isArabic
+            ? "اكتشف كعكاتك المفضلة بأسعار لا تقاوم"
+            : "Your favorite cakes, now at irresistible prices.");
+
     return (
         <section className="py-2">
             <div className="wrapper">
@@ -88,23 +132,16 @@ const HotDeals = () => {
                             <span className="h-px w-8 bg-ink" />
 
                             <span className="text-[10px] font-semibold uppercase tracking-[0.17em] text-ink">
-                                {t?.hotDeals?.eyebrow ||
-                                    (isArabic
-                                        ? "عروض لفترة محدودة"
-                                        : "Special prices, sweeter moments")}
+                                {sectionEyebrow}
                             </span>
                         </div>
 
                         <h2 className="mt-3 font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.045em] text-primary md:text-5xl">
-                            {t?.hotDeals?.heading ||
-                                (isArabic ? "أفضل العروض" : "Hot Deals")}
+                            {sectionTitle}
                         </h2>
 
                         <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/70">
-                            {t?.hotDeals?.subheading ||
-                                (isArabic
-                                    ? "اكتشف كعكاتك المفضلة بأسعار لا تقاوم"
-                                    : "Your favorite cakes, now at irresistible prices.")}
+                            {sectionSubtitle}
                         </p>
                     </div>
 
@@ -117,7 +154,13 @@ const HotDeals = () => {
 
                             <div className="flex flex-col gap-0.5 border-s border-ink/15 ps-3 text-[10px] font-semibold uppercase leading-tight tracking-[0.15em]">
                                 <span className="text-ink">
-                                    {isArabic ? "عروض" : "Hot deals"}
+                                    {isRecommendation
+                                        ? isArabic
+                                            ? "اقتراحات"
+                                            : "Suggestions"
+                                        : isArabic
+                                          ? "عروض"
+                                          : "Hot deals"}
                                 </span>
 
                                 <span className="text-ink/45">
@@ -130,18 +173,18 @@ const HotDeals = () => {
                     </div>
                 </div>
 
-                {/* Hot deals grid */}
+                {/* Cakes grid */}
                 <div className="grid grid-cols-2 gap-3 md:gap-[18px] lg:grid-cols-4">
                     {cakes.map((cake) => {
                         const image = cake.images?.[0]?.url;
                         const originalPrice = Number(cake.price);
+                        const discount = Number(
+                            cake.discountPercentage,
+                        );
 
                         const discountedPrice = Number(
                             cake.discountedPrice ??
-                                originalPrice *
-                                    (1 -
-                                        Number(cake.discountPercentage) /
-                                            100),
+                                originalPrice * (1 - discount / 100),
                         );
 
                         return (
@@ -171,13 +214,13 @@ const HotDeals = () => {
                                     <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(59,32,38,0.02)_25%,rgba(59,32,38,0.88)_100%)]" />
                                 </Link>
 
-                                {/* Discount badge */}
-                                <span className="pointer-events-none absolute start-3 top-3 z-10 inline-flex items-center gap-1.5 bg-cream px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-primary md:start-4 md:top-4">
-                                    <Flame className="size-3.5" />
-
-                                    {Number(cake.discountPercentage)}%{" "}
-                                    {isArabic ? "خصم" : "OFF"}
-                                </span>
+                                {/* Discount badge: deals only */}
+                                {!isRecommendation && discount > 0 && (
+                                    <span className="pointer-events-none absolute start-3 top-3 z-10 inline-flex items-center gap-1.5 bg-cream px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-primary md:start-4 md:top-4">
+                                        <Flame className="size-3.5" />
+                                        {discount}% {isArabic ? "خصم" : "OFF"}
+                                    </span>
+                                )}
 
                                 {/* Bottom product information */}
                                 <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-2 p-4 md:p-[23px]">
@@ -193,23 +236,26 @@ const HotDeals = () => {
 
                                         <div className="mb-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
                                             <span className="text-lg font-bold text-cream md:text-xl">
-                                                {formatPrice(discountedPrice)}
+                                                {formatPrice(
+                                                    !isRecommendation && discount > 0
+                                                        ? discountedPrice
+                                                        : originalPrice,
+                                                )}
                                             </span>
 
-                                            <span className="text-xs text-cream/65 line-through">
-                                                {formatPrice(originalPrice)}
-                                            </span>
+                                            {!isRecommendation && discount > 0 && (
+                                                <span className="text-xs text-cream/65 line-through">
+                                                    {formatPrice(originalPrice)}
+                                                </span>
+                                            )}
                                         </div>
 
-                                        <h2
-                                            
-                                            className="pointer-events-auto inline-flex items-center border border-cream/40 bg-cream px-2.5 py-2 text-[10px] font-medium uppercase tracking-[0.12em] text-primary transition-colors"
-                                        >
+                                        <h2 className="pointer-events-auto inline-flex items-center border border-cream/40 bg-cream px-2.5 py-2 text-[10px] font-medium uppercase tracking-[0.12em] text-primary">
                                             {getCategoryName(cake)}
                                         </h2>
                                     </div>
 
-                                    {/* Add to cart button */}
+                                    {/* Add to cart */}
                                     <button
                                         type="button"
                                         aria-label={
@@ -225,7 +271,7 @@ const HotDeals = () => {
                                         onClick={(event) =>
                                             handleAddToCart(event, cake)
                                         }
-                                        className="pointer-events-auto cursor-pointer grid size-9 shrink-0 place-items-center border border-white/45 bg-white/5 text-white transition-colors duration-200 hover:bg-cream hover:text-primary group-hover:bg-cream group-hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream"
+                                        className="pointer-events-auto grid size-9 shrink-0 cursor-pointer place-items-center border border-white/45 bg-white/5 text-white transition-colors duration-200 hover:bg-cream hover:text-primary group-hover:bg-cream group-hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream"
                                     >
                                         <Plus className="size-5" />
                                     </button>

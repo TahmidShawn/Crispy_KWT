@@ -24,6 +24,7 @@ import AddOns from "@/pages/adminDashboard/addOns/AddOns";
 import AddAddOn from "@/pages/adminDashboard/addOns/AddAddOn";
 import EditAddOn from "@/pages/adminDashboard/addOns/EditAddOn";
 import Customers from "@/pages/adminDashboard/customers/Customers";
+import Products from "@/pages/products/Products";
 
 const Router = () => {
     return (
@@ -32,11 +33,13 @@ const Router = () => {
             <Routes>
                 <Route element={<RootLayout />}>
                     <Route index element={<Home />} />
+                    <Route path="/category/:slug" element={<Products />} />
                 </Route>
                 <Route path="/auth/login" element={<Login />} />
                 <Route path="/auth/register" element={<Register />} />
                 <Route path="/auth/verify-email" element={<VerifyEmail />} />
 
+                {/* admin routes */}
                 <Route path="/admin" element={<AdminDashboardLayout />}>
                     <Route index element={<AdminDashboard />} />
 
