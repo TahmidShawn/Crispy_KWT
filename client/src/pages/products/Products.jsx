@@ -152,7 +152,7 @@ const Products = () => {
         (Array.isArray(firstCategory)
             ? firstCategory[0]?.name?.[language]
             : firstCategory?.name?.[language]) ||
-        slug?.replace(/-/g, " ") || 
+        slug?.replace(/-/g, " ") ||
         (isArabic ? "فئة المنتجات" : "Category");
 
     const {
@@ -181,7 +181,6 @@ const Products = () => {
         setPage(1);
     }, [filters.price, filters.size, sort, search, slug]);
 
-    // পেজ বদলালে উপরে scroll
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
     }, [page]);
@@ -247,8 +246,6 @@ const Products = () => {
           : isArabic
             ? "الكعكات"
             : "Cakes";
-
-    const decorativeText = slug ? categoryName : isArabic ? "كعكات" : "Cakes";
 
     return (
         <>
@@ -384,11 +381,11 @@ const Products = () => {
                     {/* Soft decorative glows */}
                     <div
                         aria-hidden="true"
-                        className="pointer-events-none absolute -end-32 top-24 size-[420px] rounded-full bg-blush/50 blur-3xl"
+                        className="pointer-events-none absolute -inset-e-32 top-24 size-105 rounded-full bg-blush/50 blur-3xl"
                     />
                     <div
                         aria-hidden="true"
-                        className="pointer-events-none absolute -start-32 bottom-24 size-[360px] rounded-full bg-blush/40 blur-3xl"
+                        className="pointer-events-none absolute -inset-s-32 bottom-24 size-90 rounded-full bg-blush/40 blur-3xl"
                     />
 
                     <div className="wrapper relative">
@@ -494,12 +491,12 @@ const Products = () => {
 
                                 {/* Loading */}
                                 {isLoading && (
-                                    <div className="grid grid-cols-2 gap-3 md:gap-[18px] lg:grid-cols-3">
+                                    <div className="grid grid-cols-2 gap-3 md:gap-4.5 lg:grid-cols-3">
                                         {Array.from({ length: 6 }).map(
                                             (_, index) => (
                                                 <div
                                                     key={index}
-                                                    className={`h-[290px] animate-pulse rounded-[14px] bg-ink/10 md:h-[360px] ${
+                                                    className={`h-72.5 animate-pulse rounded-[14px] bg-ink/10 md:h-90 ${
                                                         index === 0
                                                             ? "lg:col-span-2"
                                                             : ""
@@ -529,7 +526,7 @@ const Products = () => {
 
                                 {/* Grid */}
                                 {!isLoading && !isError && cakes.length > 0 && (
-                                    <div className="grid grid-cols-2 gap-3 md:gap-[18px] lg:grid-cols-3">
+                                    <div className="grid grid-cols-2 gap-3 md:gap-4.5 lg:grid-cols-3">
                                         {cakes.map((cake, index) => {
                                             const isFeature =
                                                 index === 0 &&
@@ -582,7 +579,7 @@ const Products = () => {
                                             return (
                                                 <article
                                                     key={cake._id}
-                                                    className={`group relative block h-[290px] overflow-hidden rounded-[14px] bg-ink text-cream md:h-[360px] ${
+                                                    className={`group relative block h-72.5 overflow-hidden rounded-[14px] bg-ink text-cream md:h-90 ${
                                                         isFeature
                                                             ? "lg:col-span-2"
                                                             : ""
@@ -614,7 +611,7 @@ const Products = () => {
                                                     {hasDiscount && (
                                                         <span
                                                             dir="ltr"
-                                                            className="pointer-events-none absolute start-3 top-3 z-10 inline-flex items-center gap-1.5 bg-cream px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-primary md:start-4 md:top-4"
+                                                            className="pointer-events-none absolute inset-s-3 top-3 z-10 inline-flex items-center gap-1.5 bg-cream px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-primary md:inset-s-4 md:top-4"
                                                         >
                                                             <Flame className="size-3.5" />
                                                             {discountPercent}%{" "}
@@ -625,7 +622,7 @@ const Products = () => {
                                                     )}
 
                                                     {/* Hover arrow */}
-                                                    <span className="pointer-events-none absolute end-3 top-3 z-10 grid size-9 -translate-y-1 place-items-center bg-cream text-primary opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 md:end-4 md:top-4 rtl:-scale-x-100">
+                                                    <span className="pointer-events-none absolute inset-e-3 top-3 z-10 grid size-9 -translate-y-1 place-items-center bg-cream text-primary opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 md:inset-e-4 md:top-4 rtl:-scale-x-100">
                                                         <ArrowUpRight className="size-5" />
                                                     </span>
 
@@ -641,7 +638,7 @@ const Products = () => {
                                                     )}
 
                                                     {/* Bottom information */}
-                                                    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-2 p-4 md:p-[23px]">
+                                                    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-2 p-4 md:p-5.75">
                                                         <div className="min-w-0">
                                                             <Link
                                                                 to={`/cake/${cake.slug}`}

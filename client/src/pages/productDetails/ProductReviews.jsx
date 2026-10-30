@@ -34,7 +34,7 @@ const StarRow = ({ rating, size = "size-4" }) => {
                     className={
                         index < rating
                             ? `${size} fill-primary text-primary`
-                            : `${size} text-muted-foreground/30`
+                            : `${size} text-ink/20`
                     }
                 />
             ))}
@@ -42,7 +42,12 @@ const StarRow = ({ rating, size = "size-4" }) => {
     );
 };
 
-const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = false }) => {
+const ProductReviews = ({
+    slug,
+    onWriteReview,
+    canReview = true,
+    hasReviewed = false,
+}) => {
     const { language } = useLanguage();
     const isArabic = language === "ar";
 
@@ -57,8 +62,8 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
 
     if (isLoading) {
         return (
-            <div className="mt-8 flex items-center justify-center gap-3 rounded-none rounded-tl-2xl rounded-br-2xl border border-border bg-card p-10 text-sm text-muted-foreground">
-                <Loader2 className="size-4 animate-spin text-primary" />
+            <div className="mt-8 flex min-h-52 flex-col items-center justify-center gap-3 rounded-[14px] border border-ink/10 bg-white/60 p-10 text-sm text-ink/55">
+                <Loader2 className="size-6 animate-spin text-primary" />
 
                 {isArabic
                     ? "جاري تحميل المراجعات..."
@@ -69,18 +74,28 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
 
     if (isError) {
         return (
-            <div className="mt-8 rounded-none rounded-tl-2xl rounded-br-2xl border border-border bg-card p-6 text-center">
-                <p className="text-sm text-muted-foreground">
+            <div className="mt-8 rounded-[14px] border border-ink/10 bg-white/60 px-6 py-12 text-center">
+                <div className="mx-auto grid size-12 place-items-center rounded-tl-xl rounded-br-xl bg-blush text-primary">
+                    <MessageSquare className="size-5" />
+                </div>
+
+                <h3 className="mt-4 font-display text-xl font-semibold text-ink">
                     {isArabic
-                        ? "تعذر تحميل المراجعات."
-                        : "We couldn't load the reviews."}
+                        ? "تعذر تحميل المراجعات"
+                        : "Reviews unavailable"}
+                </h3>
+
+                <p className="mt-2 text-sm text-ink/55">
+                    {isArabic
+                        ? "حدث خطأ أثناء تحميل المراجعات."
+                        : "We couldn't load the reviews. Please try again."}
                 </p>
 
                 <Button
                     type="button"
                     variant="outline-asymmetric"
                     size="sm"
-                    className="mt-4"
+                    className="mt-5"
                     onClick={() => refetch()}
                 >
                     {isArabic ? "إعادة المحاولة" : "Try again"}
@@ -90,21 +105,24 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
     }
 
     return (
-        <div className="mt-8 space-y-6">
-            <div className="rounded-none rounded-tl-2xl rounded-br-2xl border border-border bg-card">
-                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-6 py-4">
-                    <div className="flex items-center gap-3">
-                        <h3 className="text-base font-bold tracking-tight">
-                            {isArabic
-                                ? "آراء العملاء"
-                                : "Customer reviews"}
+        <div className="mt-8 space-y-5">
+            {/* Summary */}
+            <section className="overflow-hidden rounded-[14px] border border-ink/10 bg-white/60">
+                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 px-5 py-5 sm:px-6">
+                    <div>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.17em] text-primary">
+                            {isArabic ? "آراء العملاء" : "Customer feedback"}
+                        </span>
+
+                        <h3 className="mt-1 font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+                            {isArabic ? "تقييمات العملاء" : "Customer reviews"}
                         </h3>
 
-                        {numReviews > 0 && (
-                            <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
-                                {numReviews}
-                            </span>
-                        )}
+                        <p className="mt-1 text-xs text-ink/50">
+                            {isArabic
+                                ? "اكتشف تجارب العملاء مع هذه الكعكة."
+                                : "See what customers think about this cake."}
+                        </p>
                     </div>
 
                     <Button
@@ -113,6 +131,7 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
                         size="sm"
                         onClick={onWriteReview}
                         disabled={!canReview}
+                        className="shrink-0 text-xs"
                     >
                         {hasReviewed
                             ? isArabic
@@ -125,24 +144,26 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
                 </div>
 
                 {numReviews > 0 ? (
-                    <div className="grid gap-8 px-6 py-6 md:grid-cols-[auto_1fr] md:items-center md:gap-12">
-                        <div className="flex items-center gap-5 md:flex-col md:items-start md:gap-2">
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-5xl font-black leading-none tracking-tight">
-                                    {avgRating.toFixed(1)}
-                                </span>
+                    <div className="grid gap-7 p-5 sm:p-6 md:grid-cols-[180px_1fr] md:items-center md:gap-10">
+                        <div className="flex items-center gap-4 md:flex-col md:items-start md:gap-3">
+                            <div>
+                                <div className="flex items-baseline gap-1.5">
+                                    <span className="font-display text-5xl font-semibold leading-none tracking-tight text-primary">
+                                        {avgRating.toFixed(1)}
+                                    </span>
 
-                                <span className="text-sm font-medium text-muted-foreground">
-                                    / 5
-                                </span>
+                                    <span className="text-xs font-medium text-ink/40">
+                                        / 5
+                                    </span>
+                                </div>
+
+                                <StarRow
+                                    rating={Math.round(avgRating)}
+                                    size="size-4"
+                                />
                             </div>
 
-                            <StarRow
-                                rating={Math.round(avgRating)}
-                                size="size-5"
-                            />
-
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs leading-5 text-ink/55">
                                 {isArabic
                                     ? `بناءً على ${numReviews} مراجعة`
                                     : `Based on ${numReviews} ${
@@ -153,7 +174,7 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
                             </p>
                         </div>
 
-                        <div className="space-y-2.5">
+                        <div className="space-y-3">
                             {[5, 4, 3, 2, 1].map((star) => {
                                 const count =
                                     summary?.distribution?.[star] || 0;
@@ -167,13 +188,13 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
                                         key={star}
                                         className="flex items-center gap-3"
                                     >
-                                        <span className="flex w-8 shrink-0 items-center justify-end gap-1 text-xs font-medium text-muted-foreground">
+                                        <span className="flex w-8 shrink-0 items-center justify-end gap-1 text-xs font-semibold text-ink/60">
                                             {star}
 
                                             <Star className="size-3 fill-primary text-primary" />
                                         </span>
 
-                                        <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                                        <div className="h-2 flex-1 overflow-hidden rounded-full bg-ink/[0.07]">
                                             <div
                                                 className="h-full rounded-full bg-primary transition-[width] duration-500"
                                                 style={{
@@ -182,7 +203,7 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
                                             />
                                         </div>
 
-                                        <span className="w-16 shrink-0 text-end text-xs text-muted-foreground">
+                                        <span className="w-14 shrink-0 text-end text-[10px] tabular-nums text-ink/45">
                                             {count} ({percent}%)
                                         </span>
                                     </div>
@@ -191,47 +212,61 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
                         </div>
                     </div>
                 ) : (
-                    <div className="px-6 py-8 text-center">
-                        <p className="text-sm text-muted-foreground">
+                    <div className="px-5 py-8 text-center sm:px-6">
+                        <div className="mx-auto grid size-12 place-items-center rounded-tl-xl rounded-br-xl bg-blush text-primary">
+                            <Star className="size-5" />
+                        </div>
+
+                        <p className="mt-4 font-display text-lg font-semibold text-ink">
                             {isArabic
-                                ? "لا توجد مراجعات بعد — كن أول من يقيّم هذه الكعكة."
-                                : "No reviews yet — be the first to review this cake."}
+                                ? "كن أول من يقيّم هذه الكعكة"
+                                : "Be the first to rate this cake"}
+                        </p>
+
+                        <p className="mt-1 text-sm leading-6 text-ink/50">
+                            {isArabic
+                                ? "لا توجد مراجعات حتى الآن."
+                                : "There are no reviews yet."}
                         </p>
                     </div>
                 )}
-            </div>
+            </section>
 
-
+            {/* Individual reviews */}
             {reviews.length === 0 ? (
-                <div className="rounded-none rounded-tl-2xl rounded-br-2xl border border-border bg-card p-10 text-center">
-                    <MessageSquare className="mx-auto size-8 text-muted-foreground/50" />
+                <div className="rounded-[14px] border border-ink/10 bg-white/40 px-6 py-10 text-center">
+                    <div className="mx-auto grid size-12 place-items-center rounded-tl-xl rounded-br-xl bg-blush text-primary">
+                        <MessageSquare className="size-5" />
+                    </div>
 
-                    <p className="mt-3 text-sm font-medium">
-                        {isArabic ? "لا توجد مراجعات بعد" : "No reviews yet"}
+                    <p className="mt-4 font-display text-lg font-semibold text-ink">
+                        {isArabic
+                            ? "لا توجد مراجعات بعد"
+                            : "Nothing here just yet"}
                     </p>
 
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p className="mt-1 text-sm leading-6 text-ink/50">
                         {isArabic
-                            ? "كن أول من يقيّم هذه الكعكة."
-                            : "Be the first to review this cake."}
+                            ? "شارك تجربتك وساعد الآخرين في اختيار كعكتهم."
+                            : "Share your experience and help others choose their cake."}
                     </p>
                 </div>
             ) : (
-                <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2">
                     {reviews.map((review) => (
                         <article
                             key={review._id}
-                            className="flex flex-col rounded-none rounded-tl-2xl rounded-br-2xl border border-border bg-card p-5 transition-shadow duration-200 hover:shadow-md"
+                            className="flex min-w-0 flex-col rounded-[14px] border border-ink/10 bg-white/60 p-4 transition-colors duration-200 hover:border-primary/25 sm:p-5"
                         >
-                            <div className="flex items-start gap-3">
+                            <div className="flex min-w-0 items-start gap-3">
                                 {review.user?.avatarUrl ? (
                                     <img
                                         src={review.user.avatarUrl}
                                         alt={review.user.username}
-                                        className="size-10 shrink-0 rounded-full object-cover"
+                                        className="size-10 shrink-0 rounded-full border border-ink/10 object-cover"
                                     />
                                 ) : (
-                                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                                    <div className="grid size-10 shrink-0 place-items-center rounded-full bg-blush font-display text-sm font-semibold text-primary">
                                         {(
                                             review.user?.username?.[0] || "?"
                                         ).toUpperCase()}
@@ -242,7 +277,7 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
                                     <div className="flex items-start justify-between gap-3">
                                         <div className="min-w-0 flex-1">
                                             <p
-                                                className="text-sm font-semibold leading-tight break-words"
+                                                className="break-words text-sm font-semibold text-ink"
                                                 title={review.user?.username}
                                             >
                                                 {review.user?.username ||
@@ -251,7 +286,7 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
                                                         : "Customer")}
                                             </p>
 
-                                            <span className="mt-0.5 flex items-center gap-1 text-[11px] font-medium text-emerald-600">
+                                            <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700">
                                                 <CheckCircle2 className="size-3 shrink-0" />
 
                                                 {review.isVerifiedPurchase
@@ -264,7 +299,7 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
                                             </span>
                                         </div>
 
-                                        <span className="shrink-0 text-[11px] text-muted-foreground">
+                                        <span className="shrink-0 text-[10px] text-ink/45">
                                             {formatDate(
                                                 review.createdAt,
                                                 isArabic,
@@ -282,7 +317,7 @@ const ProductReviews = ({ slug, onWriteReview, canReview = true, hasReviewed = f
                             </div>
 
                             {review.comment && (
-                                <p className="mt-3 line-clamp-4 text-sm leading-6 text-muted-foreground">
+                                <p className="mt-4 line-clamp-4 text-sm leading-6 text-ink/65">
                                     {review.comment}
                                 </p>
                             )}

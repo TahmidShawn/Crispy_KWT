@@ -20,7 +20,11 @@ const ProductAddOns = () => {
 
     const isCustomer = isAuthenticated && user?.role === "user";
 
-    const { data: addOnsResponse, isLoading, isError } = useGet({
+    const {
+        data: addOnsResponse,
+        isLoading,
+        isError,
+    } = useGet({
         url: "/add-ons",
         queryKey: ["add-ons"],
         retry: false,
@@ -65,35 +69,35 @@ const ProductAddOns = () => {
     }
 
     return (
-        <section className="border-t border-border py-10 md:py-14">
+        <section className="border-t border-ink/10 bg-cream py-10 md:py-14">
             <div className="wrapper">
-                <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-8">
                     <div>
                         <div className="flex items-center gap-2 text-primary">
                             <Sparkles className="size-4" />
 
-                            <span className="text-[10px] font-bold uppercase tracking-[0.16em]">
+                            <span className="text-[10px] font-bold uppercase tracking-[0.17em]">
                                 {isArabic
                                     ? "أكمل احتفالك"
                                     : "Complete the celebration"}
                             </span>
                         </div>
 
-                        <h2 className="mt-2 text-xl font-black tracking-tight md:text-2xl">
+                        <h2 className="mt-2 font-display text-2xl font-semibold leading-tight tracking-tight text-ink md:text-3xl">
                             {isArabic
                                 ? "اجعل كعكتك أكثر تميزًا"
                                 : "Make your cake extra special"}
                         </h2>
                     </div>
 
-                    <p className="max-w-xl text-sm leading-6 text-muted-foreground md:text-right">
+                    <p className="max-w-xl text-sm leading-6 text-ink/60 md:text-right">
                         {isArabic
                             ? "أضف شموعًا أو بطاقة تهنئة أو زهورًا جميلة مع كعكتك."
                             : "Add candles, a greeting card, flowers, or another little extra to make your cake special."}
                     </p>
                 </div>
 
-                <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 lg:gap-4">
                     {addOns.map((addOn) => (
                         <FeaturedAddOn
                             key={addOn.id}
@@ -114,13 +118,13 @@ const SelectionIndicator = ({ selected }) => {
     return (
         <div
             aria-hidden="true"
-            className={`flex size-6 shrink-0 items-center justify-center rounded-full border-2 transition-all sm:size-7 ${
+            className={`grid size-7 shrink-0 place-items-center rounded-full border transition-all ${
                 selected
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-muted-foreground/35 bg-background"
+                    ? "border-primary bg-primary text-cream"
+                    : "border-ink/20 bg-cream/95 text-transparent"
             }`}
         >
-            {selected && <Check className="size-3 sm:size-3.5" />}
+            {selected && <Check className="size-3.5" />}
         </div>
     );
 };
@@ -138,8 +142,8 @@ const QuantityControl = ({
 
     return (
         <div
-            className={`flex w-fit shrink-0 items-center rounded-none rounded-tl-lg rounded-br-lg border border-border bg-background ${
-                compact ? "h-8" : "h-9"
+            className={`flex w-fit shrink-0 items-center border border-ink/15 bg-cream ${
+                compact ? "h-9" : "h-10"
             } ${disabled ? "opacity-50" : ""}`}
         >
             <Button
@@ -152,14 +156,14 @@ const QuantityControl = ({
                     maximumQuantity < 1
                 }
                 onClick={onDecrease}
-                className={`${compact ? "size-7" : "size-8"} rounded-none`}
+                className={`${compact ? "size-8" : "size-9"} rounded-none text-ink hover:bg-blush hover:text-primary`}
             >
                 <Minus className="size-3" />
             </Button>
 
             <span
                 dir="ltr"
-                className={`text-center font-bold ${
+                className={`text-center font-bold text-ink ${
                     compact ? "w-6 text-xs" : "w-8 text-sm"
                 }`}
             >
@@ -172,7 +176,7 @@ const QuantityControl = ({
                 size="icon"
                 disabled={disabled || quantity >= maximumQuantity}
                 onClick={onIncrease}
-                className={`${compact ? "size-7" : "size-8"} rounded-none`}
+                className={`${compact ? "size-8" : "size-9"} rounded-none text-ink hover:bg-blush hover:text-primary`}
             >
                 <Plus className="size-3" />
             </Button>
@@ -180,7 +184,13 @@ const QuantityControl = ({
     );
 };
 
-const FeaturedAddOn = ({ addOn, language, selected, quantity, onUpdated }) => {
+const FeaturedAddOn = ({
+    addOn,
+    language,
+    selected,
+    quantity,
+    onUpdated,
+}) => {
     const isArabic = language === "ar";
     const navigate = useNavigate();
     const location = useLocation();
@@ -216,6 +226,7 @@ const FeaturedAddOn = ({ addOn, language, selected, quantity, onUpdated }) => {
                 replace: true,
                 state: { from: location },
             });
+
             return;
         }
 
@@ -337,49 +348,69 @@ const FeaturedAddOn = ({ addOn, language, selected, quantity, onUpdated }) => {
         });
     };
 
-
     return (
-        <div
-            className={`min-w-0 overflow-hidden rounded-none rounded-tl-2xl rounded-br-2xl border transition-all ${
+        <article
+            className={`group min-w-0 overflow-hidden rounded-[14px] border transition-colors duration-300 ${
                 selected
-                    ? "border-primary/60 bg-primary/[0.05]"
-                    : "border-border bg-card"
+                    ? "border-primary/50 bg-blush/60"
+                    : "border-ink/10 bg-white/60 hover:border-primary/30"
             }`}
         >
-            <div className="relative aspect-[1.45] overflow-hidden bg-secondary">
+            <div className="relative aspect-[1.35] overflow-hidden bg-blush">
                 <img
                     src={addOn.image}
                     alt={addOn.name[language]}
-                    className="h-full w-full object-cover"
+                    loading="lazy"
+                    className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
 
-                <div className="absolute left-2 top-2 sm:left-3 sm:top-3">
+                <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/20 to-transparent"
+                />
+
+                <div className="absolute inset-s-3 top-3">
                     <SelectionIndicator selected={selected} />
                 </div>
+
+                {selected && (
+                    <span className="absolute inset-e-3 top-3 bg-primary px-2.5 py-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-cream">
+                        {isArabic ? "تم الاختيار" : "Added"}
+                    </span>
+                )}
             </div>
 
-            <div className="p-2.5 sm:p-3 md:p-4">
-                <div className="min-w-0">
-                    <h3 className="truncate text-xs font-bold sm:text-sm md:text-base">
-                        {addOn.name[language]}
-                    </h3>
+            <div className="p-3 sm:p-4">
+                <h3
+                    title={addOn.name[language]}
+                    className="truncate font-display text-sm font-semibold text-ink sm:text-base"
+                >
+                    {addOn.name[language]}
+                </h3>
 
-                    <p
-                        dir="ltr"
-                        className="mt-1 text-xs font-bold text-primary sm:text-sm"
-                    >
-                        +{formatPrice(addOn.price)}
-                    </p>
-                </div>
+                <p
+                    dir="ltr"
+                    className="mt-1.5 text-sm font-bold text-primary"
+                >
+                    +{formatPrice(addOn.price)}
+                </p>
 
-                <div className="mt-3 flex flex-col gap-2 border-t border-border/70 pt-3 sm:mt-4 sm:gap-2.5">
-                    <span className="text-[10px] font-semibold text-muted-foreground sm:text-xs">
-                        {isArabic ? "الكمية" : "Quantity"}
-                    </span>
+                <div className="mt-4 border-t border-ink/10 pt-3">
+                    <div className="mb-2.5 flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/50">
+                            {isArabic ? "الكمية" : "Quantity"}
+                        </span>
+
+                        {selected && (
+                            <span className="text-[10px] font-bold text-primary">
+                                {isArabic ? "في السلة" : "In cart"}
+                            </span>
+                        )}
+                    </div>
 
                     {isPending ? (
-                        <div className="flex h-8 w-[92px] items-center justify-center rounded-none rounded-tl-lg rounded-br-lg border border-border bg-background">
-                            <Loader2 className="size-3.5 animate-spin text-primary" />
+                        <div className="flex h-9 w-[104px] items-center justify-center border border-ink/15 bg-cream">
+                            <Loader2 className="size-4 animate-spin text-primary" />
                         </div>
                     ) : (
                         <QuantityControl
@@ -393,7 +424,7 @@ const FeaturedAddOn = ({ addOn, language, selected, quantity, onUpdated }) => {
                     )}
                 </div>
             </div>
-        </div>
+        </article>
     );
 };
 

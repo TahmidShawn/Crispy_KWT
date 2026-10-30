@@ -88,39 +88,49 @@ const ReviewFormModal = ({ open, onOpenChange, slug, cakeName }) => {
 
     const activeRating = hoveredRating || rating;
 
-
     return (
         <Dialog open={open} onOpenChange={handleClose}>
-            <DialogContent className="w-[calc(100%-2rem)] !max-w-lg overflow-y-auto p-5 md:p-6">
-                <DialogHeader className="text-left">
-                    <DialogTitle>
+            <DialogContent className="w-[calc(100%-2rem)] !max-w-lg overflow-y-auto rounded-tl-2xl rounded-br-2xl border border-ink/10 bg-cream p-5 text-ink shadow-2xl sm:p-6">
+                <DialogHeader className="text-start">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.17em] text-primary">
+                        {isArabic ? "رأيك يهمنا" : "Your feedback matters"}
+                    </span>
+
+                    <DialogTitle className="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
                         {isArabic ? "اكتب تقييمك" : "Write your review"}
                     </DialogTitle>
 
-                    <DialogDescription>
+                    <DialogDescription className="text-sm leading-6 text-ink/55">
                         {isArabic
                             ? "شارك تجربتك مع هذه الكعكة. يمكنك كتابة تقييم واحد فقط لكل كعكة."
                             : "Share your experience with this cake. You can leave only one review per cake."}
                     </DialogDescription>
                 </DialogHeader>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {cakeName && (
-                        <p className="truncate text-sm font-medium">
-                            {cakeName}
-                        </p>
+                        <div className="border-s-2 border-primary bg-blush/50 px-4 py-3">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-primary">
+                                {isArabic ? "تقييم المنتج" : "Reviewing"}
+                            </p>
+
+                            <p className="mt-1 truncate font-display text-base font-semibold text-ink">
+                                {cakeName}
+                            </p>
+                        </div>
                     )}
 
-                    <div className="space-y-2">
+                    {/* Rating */}
+                    <div className="space-y-3">
                         <Label
                             id="review-rating-label"
-                            className="text-sm font-medium"
+                            className="text-xs font-bold uppercase tracking-[0.12em] text-ink"
                         >
                             {isArabic ? "التقييم" : "Your rating"}
                         </Label>
 
                         <div
-                            className="flex items-center gap-1"
+                            className="flex flex-wrap items-center gap-1.5"
                             role="radiogroup"
                             aria-labelledby="review-rating-label"
                             onMouseLeave={() => setHoveredRating(0)}
@@ -135,11 +145,13 @@ const ReviewFormModal = ({ open, onOpenChange, slug, cakeName }) => {
                                         role="radio"
                                         aria-checked={rating === value}
                                         aria-label={`${value} ${isArabic ? "نجوم" : "stars"}`}
-                                        className="rounded-md p-0.5 transition-transform hover:scale-110 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+                                        className="rounded-md p-0.5 transition-transform hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                                         onMouseEnter={() =>
                                             setHoveredRating(value)
                                         }
-                                        onFocus={() => setHoveredRating(value)}
+                                        onFocus={() =>
+                                            setHoveredRating(value)
+                                        }
                                         onBlur={() => setHoveredRating(0)}
                                         onClick={() =>
                                             setValue("rating", value, {
@@ -148,17 +160,17 @@ const ReviewFormModal = ({ open, onOpenChange, slug, cakeName }) => {
                                         }
                                     >
                                         <Star
-                                            className={
+                                            className={`size-8 transition-colors ${
                                                 activeRating >= value
-                                                    ? "size-7 fill-primary text-primary"
-                                                    : "size-7 text-muted-foreground/40"
-                                            }
+                                                    ? "fill-primary text-primary"
+                                                    : "text-ink/20"
+                                            }`}
                                         />
                                     </button>
                                 );
                             })}
 
-                            <span className="ms-2 text-sm text-muted-foreground">
+                            <span className="ms-2 text-xs font-semibold text-ink/55">
                                 {activeRating
                                     ? `${activeRating} / 5`
                                     : isArabic
@@ -174,13 +186,20 @@ const ReviewFormModal = ({ open, onOpenChange, slug, cakeName }) => {
                         )}
                     </div>
 
+                    {/* Comment */}
                     <div className="space-y-2">
-                        <Label
-                            htmlFor="review-comment"
-                            className="text-sm font-medium"
-                        >
-                            {isArabic ? "تعليقك" : "Your comment"}
-                        </Label>
+                        <div className="flex items-center justify-between gap-3">
+                            <Label
+                                htmlFor="review-comment"
+                                className="text-xs font-bold uppercase tracking-[0.12em] text-ink"
+                            >
+                                {isArabic ? "تعليقك" : "Your comment"}
+                            </Label>
+
+                            <span className="text-[10px] font-medium text-ink/40">
+                                {isArabic ? "اختياري" : "Optional"}
+                            </span>
+                        </div>
 
                         <Textarea
                             id="review-comment"
@@ -192,10 +211,11 @@ const ReviewFormModal = ({ open, onOpenChange, slug, cakeName }) => {
                             }
                             disabled={isPending}
                             aria-invalid={Boolean(errors.comment)}
+                            className="min-h-28 resize-y rounded-tl-xl rounded-br-xl border-ink/15 bg-white/70 text-sm text-ink placeholder:text-ink/35 focus-visible:border-primary focus-visible:ring-primary/20"
                             {...register("comment")}
                         />
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex min-h-4 items-center justify-between gap-3">
                             {errors.comment ? (
                                 <p className="text-xs text-destructive">
                                     {errors.comment.message}
@@ -204,18 +224,20 @@ const ReviewFormModal = ({ open, onOpenChange, slug, cakeName }) => {
                                 <span />
                             )}
 
-                            <span className="text-xs text-muted-foreground">
+                            <span className="shrink-0 text-[10px] tabular-nums text-ink/45">
                                 {comment.length}/{MAX_COMMENT_LENGTH}
                             </span>
                         </div>
                     </div>
 
-                    <DialogFooter>
+                    {/* Actions */}
+                    <DialogFooter className="gap-2 sm:gap-2">
                         <Button
                             type="button"
                             variant="outline-asymmetric"
                             onClick={handleClose}
                             disabled={isPending}
+                            className="h-11 flex-1 text-xs font-bold uppercase tracking-[0.08em] sm:flex-none"
                         >
                             {isArabic ? "إلغاء" : "Cancel"}
                         </Button>
@@ -224,6 +246,7 @@ const ReviewFormModal = ({ open, onOpenChange, slug, cakeName }) => {
                             type="submit"
                             variant="asymmetric"
                             disabled={isPending || rating === 0}
+                            className="h-11 flex-1 gap-2 text-xs font-bold uppercase tracking-[0.08em] sm:flex-none"
                         >
                             {isPending && (
                                 <Loader2 className="size-4 animate-spin" />
@@ -245,4 +268,3 @@ const ReviewFormModal = ({ open, onOpenChange, slug, cakeName }) => {
 };
 
 export default ReviewFormModal;
-
