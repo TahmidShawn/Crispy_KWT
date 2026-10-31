@@ -74,7 +74,7 @@ const cakeSchema = z.object({
         .min(1, "Please select at least one cake flavor")
         .max(5, "You can select up to 5 cake flavors"),
 
-    weightSize: z.enum(["small", "medium"], {
+    weightSize: z.enum(["small", "medium", "large"], {
         message: "Please select a size",
     }),
 
@@ -686,6 +686,10 @@ export default function UpdateCake() {
 
                                             <SelectItem value="medium">
                                                 Medium
+                                            </SelectItem>
+
+                                            <SelectItem value="large">
+                                                Large
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>

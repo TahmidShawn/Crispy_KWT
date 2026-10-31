@@ -29,4 +29,9 @@ export const sizes = [
         label: { en: "Medium", ar: "متوسط" },
         hint: { en: "Serves 8–12", ar: "٨–١٢ شخصًا" },
     },
+    {
+        value: "large",
+        label: { en: "Large", ar: "كبير" },
+        hint: { en: "Serves 16–24", ar: "١٦–٢٤ شخصًا" },
+    },
 ];

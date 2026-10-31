@@ -44,6 +44,7 @@ const flavorLabels = {
 const sizeLabels = {
     small: { en: "Small", ar: "صغير" },
     medium: { en: "Medium", ar: "متوسط" },
+    large: { en: "Large", ar: "كبير" },
 };
 
 const formatPrice = (price) => `${Number(price).toFixed(3)} KWD`;

@@ -69,7 +69,7 @@ const cakeSchema = z.object({
         .min(1, "Please select at least one cake flavor")
         .max(5, "You can select up to 5 cake flavors"),
 
-    weightSize: z.enum(["small", "medium"]),
+    weightSize: z.enum(["small", "medium", "large"]),
 
     price: z
         .string()
@@ -789,7 +789,9 @@ export default function AddCakes() {
                                             <span>
                                                 {field.value === "small"
                                                     ? "Small"
-                                                    : "Medium"}
+                                                    : field.value === "large"
+                                                        ? "Large"
+                                                        : "Medium"}
                                             </span>
                                         </SelectTrigger>
 
@@ -800,6 +802,10 @@ export default function AddCakes() {
 
                                             <SelectItem value="medium">
                                                 Medium
+                                            </SelectItem>
+
+                                            <SelectItem value="large">
+                                                Large
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
