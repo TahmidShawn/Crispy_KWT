@@ -122,8 +122,8 @@ export const createCakeSchema = z.object({
 
     flavor: flavorCsv,
 
-    weightSize: z.enum(["small", "medium"], {
-        error: "Size must be either small or medium",
+    weightSize: z.enum(["small", "medium", "large"], {
+        error: "Size must be small, medium, or large",
     }),
 
     price: kwdPrice,
@@ -172,7 +172,7 @@ export const updateCakeSchema = z.object({
 
     flavor: flavorCsv.optional(),
 
-    weightSize: z.enum(["small", "medium"]).optional(),
+    weightSize: z.enum(["small", "medium", "large"]).optional(),
 
     price: optionalKwdPrice,
 

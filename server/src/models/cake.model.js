@@ -83,8 +83,8 @@ const cakeSchema = new mongoose.Schema(
             type: String,
             required: [true, "Please select the cake size"],
             enum: {
-                values: ["small", "medium"],
-                message: "Size must be either small or medium",
+                values: ["small", "medium", "large"],
+                message: "Size must be small, medium, or large",
             },
         },
         price: {
@@ -163,6 +163,7 @@ cakeSchema.virtual("discountedPrice").get(function () {
 cakeSchema.virtual("servings").get(function () {
     if (this.weightSize === "small") return "3-4";
     if (this.weightSize === "medium") return "8-12";
+    if (this.weightSize === "large") return "16-24";
     return null;
 });
 

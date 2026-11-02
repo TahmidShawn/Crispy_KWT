@@ -239,7 +239,7 @@ export const getCakes = asyncHandler(async (req, res) => {
             .map((item) => item.trim())
             .filter(Boolean);
 
-        const allowedSizes = ["small", "medium"];
+        const allowedSizes = ["small", "medium", "large"];
 
         const hasInvalidSize = sizes.some(
             (item) => !allowedSizes.includes(item),
@@ -385,6 +385,45 @@ export const getCakes = asyncHandler(async (req, res) => {
             limit: limitNum,
             pages: Math.ceil(total / limitNum),
         },
+    });
+});
+
+export const getCakeSearchSuggestions = asyncHandler(async (req, res) => {
+    const { q } = req.query;
+
+    if (!q || !String(q).trim()) {
+        return res.status(200).json({
+            success: true,
+            message: "No query provided",
+            suggestions: [],
+        });
+    }
+
+    const term = String(q).trim();
+
+    const cakes = await Cake.find(
+        {
+            isActive: true,
+            $or: [
+                { "name.en": { $regex: term, $options: "i" } },
+                { "name.ar": { $regex: term, $options: "i" } },
+            ],
+        },
+        { _id: 1, name: 1, slug: 1 },
+    )
+        .sort({ displayOrder: 1, createdAt: -1 })
+        .limit(10);
+
+    const suggestions = cakes.map((cake) => ({
+        id: cake._id,
+        name: cake.name,
+        slug: cake.slug,
+    }));
+
+    res.status(200).json({
+        success: true,
+        message: "Search suggestions fetched successfully",
+        suggestions,
     });
 });
 

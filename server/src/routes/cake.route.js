@@ -6,6 +6,7 @@ import {
     getAdminCakes,
     getAdminCake,
     getCake,
+    getCakeSearchSuggestions,
     updateCake,
     deleteCake,
     updateCakeOrder,
@@ -27,7 +28,9 @@ import upload from "../middlewares/multer.middleware.js";
 
 const router = Router();
 router.route("/cakes").get(getCakes);
-router.route("/cakes/:slug").get(getCake);
+router.route("/cakes/:slug").get(getCake);
+
+router.route("/cakes/search-suggestions").get(getCakeSearchSuggestions);
 router
     .route("/admin/cakes")
     .get(isAuthenticatedUser, authorizeRoles("admin"), getAdminCakes)
