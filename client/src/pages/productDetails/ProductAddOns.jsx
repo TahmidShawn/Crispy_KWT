@@ -83,7 +83,7 @@ const ProductAddOns = () => {
                             </span>
                         </div>
 
-                        <h2 className="mt-2 font-display text-2xl font-semibold leading-tight tracking-tight text-ink md:text-3xl">
+                        <h2 className="mt-2 font-serif text-2xl font-semibold leading-tight tracking-tight text-ink md:text-3xl">
                             {isArabic
                                 ? "اجعل كعكتك أكثر تميزًا"
                                 : "Make your cake extra special"}
@@ -383,7 +383,7 @@ const FeaturedAddOn = ({
             <div className="p-3 sm:p-4">
                 <h3
                     title={addOn.name[language]}
-                    className="truncate font-display text-sm font-semibold text-ink sm:text-base"
+                    className="truncate font-serif text-sm font-semibold text-ink sm:text-base"
                 >
                     {addOn.name[language]}
                 </h3>

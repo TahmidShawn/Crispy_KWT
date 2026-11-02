@@ -1,3 +1,4 @@
+
 import {
     Cake,
     House,
@@ -54,15 +55,15 @@ const BottomBar = () => {
     const isCategory = pathname.startsWith("/category");
 
     const itemClass = (active = false) =>
-        `flex size-14 flex-col items-center justify-center gap-1 rounded-xl transition-colors active:bg-white/25 data-popup-open:bg-white/20 data-popup-open:text-white ${
-            active ? "bg-white/20 text-white" : "text-white/75"
+        `flex size-14 flex-col items-center justify-center gap-1 rounded-xl transition-colors active:bg-blush data-popup-open:bg-blush data-popup-open:text-primary ${
+            active ? "bg-blush text-primary" : "text-ink/65"
         }`;
 
     const linkClass =
         "flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium text-ink transition-colors focus:bg-blush focus:text-ink active:bg-blush";
 
     return (
-        <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-white/20 bg-transparent pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(144,24,92,0.25)] backdrop-blur-md md:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-ink/10 bg-cream/95 text-ink pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(144,24,92,0.10)] backdrop-blur-md md:hidden">
             <div className="flex h-16 items-center justify-around">
                 <Link to="/" className={itemClass(isHome)}>
                     <House className="size-5" />
@@ -92,14 +93,14 @@ const BottomBar = () => {
                         side="top"
                         align="center"
                         sideOffset={12}
-                        className="w-72 rounded-2xl border-secondary bg-secondary p-2 shadow-xl shadow-primary/20"
+                        className="w-72 rounded-2xl border border-ink/10 bg-white p-2 text-ink shadow-xl shadow-primary/10"
                     >
                         <div className="px-2.5 py-2">
-                            <p className="text-sm font-bold text-primary-dark">
+                            <p className="text-sm font-bold">
                                 {isArabic ? "تصفح الفئات" : "Browse categories"}
                             </p>
 
-                            <p className="mt-0.5 text-xs text-primary/70">
+                            <p className="mt-0.5 text-xs text-ink/55">
                                 {isArabic
                                     ? "اختر نوع الكعكة"
                                     : "Choose a cake category"}
@@ -107,7 +108,7 @@ const BottomBar = () => {
                         </div>
 
                         {categories.length === 0 ? (
-                            <p className="px-2.5 py-4 text-center text-xs text-primary/70">
+                            <p className="px-2.5 py-4 text-center text-xs text-ink/55">
                                 {isArabic
                                     ? "لا توجد فئات"
                                     : "No categories available"}
@@ -118,7 +119,7 @@ const BottomBar = () => {
                                     <Link
                                         key={category._id}
                                         to={`/category/${category.slug}`}
-                                        className="rounded-xl border border-secondary bg-white px-2.5 py-2.5 text-xs font-medium text-primary transition-colors active:bg-primary active:text-primary-foreground"
+                                        className="rounded-xl border border-ink/10 bg-cream px-2.5 py-2.5 text-xs font-medium text-ink transition-colors hover:border-primary/30 hover:bg-blush hover:text-primary active:bg-blush"
                                     >
                                         {category.name[language]}
                                     </Link>
@@ -161,19 +162,19 @@ const BottomBar = () => {
                             side="top"
                             align="end"
                             sideOffset={12}
-                            className="w-56 border-ink/10 bg-white text-ink shadow-md rounded-lg p-1"
+                            className="w-56 border border-ink/10 bg-white p-1 text-ink shadow-md rounded-lg"
                         >
-                            <div className="flex items-center gap-3 rounded-xl bg-secondary p-3">
-                                <div className="flex size-9 shrink-0 items-center justify-center rounded-none rounded-tl-xl rounded-br-xl bg-primary text-primary-foreground shadow-md shadow-primary/30">
+                            <div className="flex items-center gap-3 rounded-xl bg-blush/70 p-3">
+                                <div className="flex size-9 shrink-0 items-center justify-center rounded-none rounded-tl-xl rounded-br-xl bg-primary text-white shadow-md shadow-primary/20">
                                     <Cake className="size-4" />
                                 </div>
 
                                 <div className="min-w-0">
-                                    <p className="truncate text-sm font-bold text-primary-dark">
+                                    <p className="truncate text-sm font-bold text-primary">
                                         {isArabic ? "حسابي" : "My account"}
                                     </p>
 
-                                    <p className="text-[11px] text-primary/70">
+                                    <p className="text-[11px] text-ink/55">
                                         {isArabic
                                             ? "إدارة حسابك"
                                             : "Manage your account"}

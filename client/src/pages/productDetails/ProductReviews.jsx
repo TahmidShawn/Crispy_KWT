@@ -114,7 +114,7 @@ const ProductReviews = ({
                             {isArabic ? "آراء العملاء" : "Customer feedback"}
                         </span>
 
-                        <h3 className="mt-1 font-display text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+                        <h3 className="mt-1 font-serif text-xl font-semibold tracking-tight text-ink sm:text-2xl">
                             {isArabic ? "تقييمات العملاء" : "Customer reviews"}
                         </h3>
 
@@ -217,7 +217,7 @@ const ProductReviews = ({
                             <Star className="size-5" />
                         </div>
 
-                        <p className="mt-4 font-display text-lg font-semibold text-ink">
+                        <p className="mt-4 font-serif text-lg font-semibold text-ink">
                             {isArabic
                                 ? "كن أول من يقيّم هذه الكعكة"
                                 : "Be the first to rate this cake"}
@@ -266,7 +266,7 @@ const ProductReviews = ({
                                         className="size-10 shrink-0 rounded-full border border-ink/10 object-cover"
                                     />
                                 ) : (
-                                    <div className="grid size-10 shrink-0 place-items-center rounded-full bg-blush font-display text-sm font-semibold text-primary">
+                                    <div className="grid size-10 shrink-0 place-items-center rounded-full bg-blush font-serif text-sm font-semibold text-primary">
                                         {(
                                             review.user?.username?.[0] || "?"
                                         ).toUpperCase()}

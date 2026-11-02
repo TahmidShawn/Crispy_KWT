@@ -17,7 +17,7 @@ const ProductGallery = ({ product }) => {
     if (images.length === 0) {
         return (
             <div className="grid aspect-square place-items-center rounded-[14px] bg-blush">
-                <span className="font-display text-lg font-semibold text-primary">
+                <span className="font-serif text-lg font-semibold text-primary">
                     {product.name?.en || "Cake"}
                 </span>
             </div>

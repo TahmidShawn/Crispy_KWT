@@ -243,7 +243,6 @@ export default function AdminDashboardLayout() {
                         <div className="flex items-center gap-3">
                             <SheetTrigger asChild>
                                 <Button
-                                    variant="ghost"
                                     size="icon"
                                     className="lg:hidden"
                                     aria-label="Open menu"
@@ -265,7 +264,6 @@ export default function AdminDashboardLayout() {
 
                         <div className="ml-auto flex items-center gap-2">
                             <Button
-                                variant="ghost"
                                 size="icon"
                                 className="relative"
                             >

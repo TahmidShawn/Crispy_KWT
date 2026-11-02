@@ -48,7 +48,7 @@ const PopularCategories = () => {
     if (error || !categories.length) {
         return (
             <div className="flex min-h-[60vh] flex-col items-center justify-center bg-cream px-4 text-center">
-                <h3 className="mb-2 font-display text-2xl font-semibold text-ink">
+                <h3 className="mb-2 font-serif text-2xl font-semibold text-ink">
                     {isArabic
                         ? "لا توجد فئات شائعة متاحة"
                         : "No popular categories available"}
@@ -80,7 +80,7 @@ const PopularCategories = () => {
                             </span>
                         </div>
 
-                        <h2 className="mt-3 font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.045em] text-primary md:text-5xl">
+                        <h2 className="mt-3 font-serif text-[34px] font-semibold leading-[1.08] tracking-[-0.045em] text-primary md:text-5xl">
                             {t?.categories?.heading ||
                                 (isArabic
                                     ? "الفئات الشائعة"
@@ -97,7 +97,7 @@ const PopularCategories = () => {
 
                     {/* Category count */}
                     <div className="flex items-center gap-3 self-start md:self-auto">
-                        <span className="font-display text-5xl font-semibold leading-none text-primary md:text-6xl">
+                        <span className="font-serif text-5xl font-semibold leading-none text-primary md:text-6xl">
                             {String(categories.length).padStart(2, "0")}
                         </span>
 
@@ -132,7 +132,7 @@ const PopularCategories = () => {
                                     />
                                 ) : (
                                     <div className="flex size-full items-center justify-center">
-                                        <span className="font-display text-6xl font-semibold text-primary/40">
+                                        <span className="font-serif text-6xl font-semibold text-primary/40">
                                             {String(getName(cat)).charAt(0)}
                                         </span>
                                     </div>
@@ -152,7 +152,7 @@ const PopularCategories = () => {
                             {/* Content */}
                             <div className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-2 p-4 md:p-[23px]">
                                 <div className="min-w-0">
-                                    <h3 className="truncate font-display text-xl font-semibold text-cream md:text-3xl">
+                                    <h3 className="truncate font-serif text-xl font-semibold text-cream md:text-3xl">
                                         {getName(cat)}
                                     </h3>
                                 </div>

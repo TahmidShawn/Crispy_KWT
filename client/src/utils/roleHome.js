@@ -3,6 +3,10 @@ export const getRoleHome = (role) => {
         return "/admin";
     }
 
+    if (role === "user") {
+        return "/dashboard";
+    }
+
     return "/";
 };
 

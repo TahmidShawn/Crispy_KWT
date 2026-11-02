@@ -55,13 +55,16 @@ const ProductDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const { isAuthenticated, isLoading: isAuthLoading } = useAuth();
+    const { isAuthenticated, isLoading: isAuthLoading, user } = useAuth();
 
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState("reviews");
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
     const isArabic = language === "ar";
+
+    const canBuy = isAuthenticated && user?.role === "user";
+    const isAdmin = user?.role === "admin";
 
     const {
         data: cakeResponse,
@@ -499,7 +502,11 @@ const ProductDetails = () => {
                                 <Button
                                     type="button"
                                     size="lg"
-                                    disabled={isOutOfStock || isAddingToCart}
+                                    disabled={
+                                        isOutOfStock ||
+                                        isAddingToCart ||
+                                        !canBuy
+                                    }
                                     onClick={handleAddToCart}
                                     className="mt-5 h-12 w-full gap-3 text-[10px] font-bold uppercase tracking-[0.14em]"
                                 >
@@ -526,11 +533,24 @@ const ProductDetails = () => {
                                     )}
                                 </Button>
 
-                                <p className="mt-3 text-center text-[10px] leading-5 text-ink/45">
-                                    {isArabic
-                                        ? "كعكات مميزة للحظاتك الخاصة."
-                                        : "Something special for your sweetest moments."}
-                                </p>
+                                {!canBuy && (
+                                    <p className="mt-3 text-center text-[10px] leading-5 text-ink/45">
+                                        {!isAuthenticated
+                                            ? isArabic
+                                                ? "يرجى تسجيل الدخول لإضافة الكعكة إلى السلة"
+                                                : "Please log in to add cakes to your cart"
+                                            : isArabic
+                                              ? "التسوق متاح لحسابات العملاء فقط"
+                                              : "Shopping is available for customer accounts only"}
+                                    </p>
+                                )}
+                                {canBuy && (
+                                    <p className="mt-3 text-center text-[10px] leading-5 text-ink/45">
+                                        {isArabic
+                                            ? "كعكات مميزة للحظاتك الخاصة."
+                                            : "Something special for your sweetest moments."}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>

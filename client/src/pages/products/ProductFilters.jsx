@@ -92,7 +92,7 @@ const ProductFilters = ({
                     </div>
 
                     <div>
-                        <h2 className="font-display text-xl font-semibold leading-none text-primary">
+                        <h2 className="font-serif text-xl font-semibold leading-none text-primary">
                             {isArabic ? "تصفية المنتجات" : "Filters"}
                         </h2>
 
@@ -269,7 +269,7 @@ const ProductFilters = ({
                                                 : "border-ink/15 text-ink hover:border-primary hover:text-primary"
                                         }`}
                                     >
-                                        <span className="font-display text-lg font-semibold leading-none">
+                                        <span className="font-serif text-lg font-semibold leading-none">
                                             {size.label[language]}
                                         </span>
 

@@ -289,7 +289,7 @@ const Products = () => {
                         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                             <div className="max-w-2xl">
                                 {/* Title */}
-                                <h1 className="mt-3 font-display text-[28px] font-semibold leading-[1.08] tracking-[-0.045em] text-cream md:text-4xl">
+                                <h1 className="mt-3 font-serif text-[28px] font-semibold leading-[1.08] tracking-[-0.045em] text-cream md:text-4xl">
                                     {pageTitle}
                                 </h1>
 
@@ -304,7 +304,7 @@ const Products = () => {
                             {/* Count + mobile filter button */}
                             <div className="flex items-center justify-between gap-4 self-stretch md:self-auto">
                                 <div className="flex items-center gap-3">
-                                    <span className="font-display text-4xl font-semibold leading-none text-cream md:text-5xl">
+                                    <span className="font-serif text-4xl font-semibold leading-none text-cream md:text-5xl">
                                         {isLoading
                                             ? "--"
                                             : String(totalCakes).padStart(
@@ -345,7 +345,7 @@ const Products = () => {
                                         className="w-[min(90vw,380px)] overflow-y-auto bg-cream p-0"
                                     >
                                         <SheetHeader className="border-b border-ink/10 px-5 py-5 text-start">
-                                            <SheetTitle className="font-display text-xl font-semibold text-primary">
+                                            <SheetTitle className="font-serif text-xl font-semibold text-primary">
                                                 {isArabic
                                                     ? "تصفية المنتجات"
                                                     : "Filter products"}
@@ -510,7 +510,7 @@ const Products = () => {
                                 {/* Error */}
                                 {!isLoading && isError && (
                                     <div className="rounded-[14px] border border-ink/10 bg-white/60 px-6 py-16 text-center">
-                                        <h2 className="font-display text-2xl font-semibold text-primary">
+                                        <h2 className="font-serif text-2xl font-semibold text-primary">
                                             {isArabic
                                                 ? "تعذر تحميل الكعكات"
                                                 : "Unable to load cakes"}

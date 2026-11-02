@@ -61,7 +61,7 @@ const Footer = () => {
                                 <CakeSlice className="size-5" />
                             </span>
 
-                            <span className="font-display text-2xl font-bold tracking-tight text-primary">
+                            <span className="font-serif text-2xl font-bold tracking-tight text-primary">
                                 <span className="text-ink">CRISPY</span> KWT
                             </span>
                         </Link>

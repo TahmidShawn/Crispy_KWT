@@ -1,4 +1,4 @@
-import { Flame, Tag, Plus } from "lucide-react";
+import { Flame, Loader2, Plus, Tag } from "lucide-react";
 import { Link } from "react-router";
 
 import { useLanguage } from "@/context/LanguageContext";
@@ -14,7 +14,7 @@ const HotDeals = ({
 }) => {
     const { language, t } = useLanguage();
     const isArabic = language === "ar";
-    const { addToCart } = useAddToCart();
+    const { addToCart, pendingCakeId } = useAddToCart();
 
     // Custom headings enable recommendation mode.
     const isRecommendation = Boolean(eyebrow || title || subtitle);
@@ -71,7 +71,7 @@ const HotDeals = ({
     const handleAddToCart = (event, cake) => {
         event.preventDefault();
         event.stopPropagation();
-        addToCart(cake);
+        addToCart(cake._id);
     };
 
     if (isLoading) {
@@ -136,7 +136,7 @@ const HotDeals = ({
                             </span>
                         </div>
 
-                        <h2 className="mt-3 font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.045em] text-primary md:text-5xl">
+                        <h2 className="mt-3 font-serif text-[34px] font-semibold leading-[1.08] tracking-[-0.045em] text-primary md:text-5xl">
                             {sectionTitle}
                         </h2>
 
@@ -148,7 +148,7 @@ const HotDeals = ({
                     {/* Deal count */}
                     <div className="flex items-center justify-between gap-4 self-stretch md:self-auto">
                         <div className="flex items-center gap-3">
-                            <span className="font-display text-5xl font-semibold leading-none text-primary md:text-6xl">
+                            <span className="font-serif text-5xl font-semibold leading-none text-primary md:text-6xl">
                                 {String(cakes.length).padStart(2, "0")}
                             </span>
 
@@ -229,7 +229,7 @@ const HotDeals = ({
                                             to={`/cake/${cake.slug}`}
                                             className="pointer-events-auto block"
                                         >
-                                            <h3 className="mb-3 truncate font-display text-xl font-semibold text-cream transition-opacity group-hover:opacity-85 md:text-2xl">
+                                            <h3 className="mb-3 truncate font-serif text-xl font-semibold text-cream transition-opacity group-hover:opacity-85 md:text-2xl">
                                                 {getName(cake)}
                                             </h3>
                                         </Link>
@@ -268,12 +268,21 @@ const HotDeals = ({
                                                 ? "أضف إلى السلة"
                                                 : "Add to cart"
                                         }
-                                        onClick={(event) =>
-                                            handleAddToCart(event, cake)
-                                        }
-                                        className="pointer-events-auto grid size-9 shrink-0 cursor-pointer place-items-center border border-white/45 bg-white/5 text-white transition-colors duration-200 hover:bg-cream hover:text-primary group-hover:bg-cream group-hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream"
+                                        onClick={(event) => {
+                                            event.preventDefault();
+                                            event.stopPropagation();
+                                            handleAddToCart(event, cake);
+                                        }}
+                                        disabled={pendingCakeId === cake._id}
+                                        className="pointer-events-auto grid size-9 shrink-0 cursor-pointer place-items-center border border-white/45 bg-white/5 text-white transition-colors duration-200 hover:bg-cream hover:text-primary group-hover:bg-cream group-hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream disabled:cursor-not-allowed disabled:opacity-40"
                                     >
-                                        <Plus className="size-5" />
+                                        {pendingCakeId === cake._id ? (
+                                            <Loader2
+                                                className="size-5 animate-spin"
+                                            />
+                                        ) : (
+                                            <Plus className="size-5" />
+                                        )}
                                     </button>
                                 </div>
                             </article>

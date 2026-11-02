@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import api from "@/api/axios";
@@ -15,6 +16,8 @@ const useAddToCart = () => {
     const isArabic = language === "ar";
 
     const canAddToCart = isAuthenticated && user?.role === "user";
+
+    const [pendingCakeId, setPendingCakeId] = useState(null);
 
     const mutation = useMutation({
         mutationFn: async ({ cakeId, quantity }) => {
@@ -39,6 +42,9 @@ const useAddToCart = () => {
                         ? "تعذر إضافة الكعكة إلى السلة"
                         : "Failed to add cake to cart"),
             );
+        },
+        onSettled: () => {
+            setPendingCakeId(null);
         },
     });
 
@@ -67,13 +73,14 @@ const useAddToCart = () => {
             return;
         }
 
+        setPendingCakeId(cakeId);
         mutation.mutate({ cakeId, quantity });
     };
 
     return {
         addToCart,
         isPending: mutation.isPending,
-        pendingCakeId: mutation.variables?.cakeId,
+        pendingCakeId,
     };
 };
 

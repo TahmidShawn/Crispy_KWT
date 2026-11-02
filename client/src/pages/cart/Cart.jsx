@@ -1,4 +1,3 @@
-
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import {
@@ -122,9 +121,7 @@ const Cart = () => {
                 }
 
                 const price = Number(cake.price ?? 0);
-                const discountPercentage = Number(
-                    cake.discountPercentage ?? 0,
-                );
+                const discountPercentage = Number(cake.discountPercentage ?? 0);
 
                 const discountedPrice = Number(
                     cake.discountedPrice ??
@@ -281,7 +278,7 @@ const Cart = () => {
                                 <ShoppingBag className="size-6" />
                             </div>
 
-                            <h2 className="mt-5 font-display text-2xl font-semibold text-primary">
+                            <h2 className="mt-5 font-serif text-2xl font-semibold text-primary">
                                 {isArabic
                                     ? "تعذر تحميل السلة"
                                     : "Unable to load your cart"}
@@ -338,7 +335,7 @@ const Cart = () => {
 
                     <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                         <div className="max-w-2xl">
-                            <h1 className="mt-3 font-display text-[28px] font-semibold leading-[1.08] tracking-[-0.045em] text-cream md:text-4xl">
+                            <h1 className="mt-3 font-serif text-[28px] font-semibold leading-[1.08] tracking-[-0.045em] text-cream md:text-4xl">
                                 {isArabic ? "سلتك" : "Your cart"}
                             </h1>
 
@@ -350,7 +347,7 @@ const Cart = () => {
                         </div>
 
                         <div className="flex items-center gap-3 self-start md:self-auto">
-                            <span className="font-display text-4xl font-semibold leading-none text-cream md:text-5xl">
+                            <span className=" text-4xl font-semibold leading-none text-cream md:text-5xl">
                                 {String(totalItems).padStart(2, "0")}
                             </span>
 
@@ -384,7 +381,7 @@ const Cart = () => {
                             </div>
 
                             <div>
-                                <h2 className="font-display text-lg font-semibold text-primary md:text-xl">
+                                <h2 className="font-serif text-lg font-semibold text-primary md:text-xl">
                                     {isArabic
                                         ? "اجعل احتفالك أكثر تميزًا"
                                         : "Make your celebration extra special"}
@@ -403,9 +400,7 @@ const Cart = () => {
                             className={`${solidButton} shrink-0 hover:bg-primary/70 `}
                             onClick={scrollToAddOns}
                         >
-                            {isArabic
-                                ? "اكتشف الإضافات"
-                                : "Explore add-ons"}
+                            {isArabic ? "اكتشف الإضافات" : "Explore add-ons"}
 
                             <ArrowRight className="size-4 rtl:rotate-180" />
                         </Button>
@@ -451,9 +446,7 @@ const Cart = () => {
                                             selected={selectedItemIds.includes(
                                                 item.id,
                                             )}
-                                            onToggle={() =>
-                                                toggleItem(item.id)
-                                            }
+                                            onToggle={() => toggleItem(item.id)}
                                             onUpdated={refetchCart}
                                         />
                                     ))}
@@ -464,7 +457,7 @@ const Cart = () => {
                                         <ShoppingBag className="size-6" />
                                     </div>
 
-                                    <h2 className="font-display text-2xl font-semibold text-primary">
+                                    <h2 className="font-serif text-2xl font-semibold text-primary">
                                         {isArabic
                                             ? "سلة التسوق فارغة"
                                             : "Your cart is empty"}
@@ -495,7 +488,7 @@ const Cart = () => {
                                             </span>
                                         </div>
 
-                                        <h2 className="mt-3 font-display text-[30px] font-semibold leading-[1.08] tracking-[-0.045em] text-primary md:text-4xl">
+                                        <h2 className="mt-3 font-serif text-[30px] font-semibold leading-[1.08] tracking-[-0.045em] text-primary md:text-4xl">
                                             {isArabic
                                                 ? "اجعل كعكتك أكثر تميزًا"
                                                 : "Make your cake extra special"}
@@ -528,7 +521,7 @@ const Cart = () => {
 
                                         <DialogContent className="max-h-[90vh] w-[calc(100%-2rem)] !max-w-[70vw] overflow-y-auto rounded-[14px] border border-ink/10 bg-cream p-5 md:p-6">
                                             <DialogHeader className="mb-2">
-                                                <DialogTitle className="font-display text-2xl font-semibold text-primary">
+                                                <DialogTitle className="font-serif text-2xl font-semibold text-primary">
                                                     {isArabic
                                                         ? "اجعل طلبك مميزًا"
                                                         : "Make your order special"}
@@ -610,7 +603,7 @@ const Cart = () => {
                                 <div className="p-5 md:p-6">
                                     {selectedItemsCount === 0 ? (
                                         <div className="py-7 text-center">
-                                            <div className="mx-auto grid size-14 place-items-center border border-ink/10 bg-cream text-primary">
+                                            <div className="mx-auto grid size-14 rounded-lg place-items-center border border-ink/10 bg-cream text-primary">
                                                 <ShoppingBag className="size-6" />
                                             </div>
 
@@ -629,7 +622,8 @@ const Cart = () => {
                                     ) : (
                                         <>
                                             <div className="space-y-5">
-                                                {selectedCartItems.length > 0 && (
+                                                {selectedCartItems.length >
+                                                    0 && (
                                                     <div>
                                                         <p className="mb-2.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-primary">
                                                             {isArabic
@@ -676,7 +670,8 @@ const Cart = () => {
                                                     </div>
                                                 )}
 
-                                                {selectedAddOnItems.length > 0 && (
+                                                {selectedAddOnItems.length >
+                                                    0 && (
                                                     <div>
                                                         <p className="mb-2.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-primary">
                                                             {isArabic
@@ -721,7 +716,8 @@ const Cart = () => {
                                             <div className="my-5 border-t border-dashed border-ink/15" />
 
                                             <div className="space-y-3 text-sm">
-                                                {selectedCartItems.length > 0 && (
+                                                {selectedCartItems.length >
+                                                    0 && (
                                                     <SummaryRow
                                                         label={
                                                             isArabic
@@ -737,7 +733,8 @@ const Cart = () => {
                                                     />
                                                 )}
 
-                                                {selectedAddOnItems.length > 0 && (
+                                                {selectedAddOnItems.length >
+                                                    0 && (
                                                     <SummaryRow
                                                         label={
                                                             isArabic
@@ -817,7 +814,7 @@ const Cart = () => {
 
                                             <span
                                                 dir="ltr"
-                                                className="font-display text-[26px] font-semibold leading-none tracking-[-0.04em] text-primary"
+                                                className=" text-[26px] font-semibold leading-none tracking-[-0.04em] text-primary"
                                             >
                                                 {formatPrice(total)}
                                             </span>
@@ -928,7 +925,7 @@ const CartItem = ({ item, language, selected, onToggle, onUpdated }) => {
                     : "border-ink/10 bg-white/60 opacity-60"
             }`}
         >
-            <div className="flex gap-2.5 sm:gap-3 md:gap-4">
+            <div className="flex gap-2.5 sm:gap-3 md:gap-8">
                 <div className="flex shrink-0 items-start pt-1">
                     <Checkbox
                         checked={selected}
@@ -948,11 +945,7 @@ const CartItem = ({ item, language, selected, onToggle, onUpdated }) => {
                 <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2 sm:gap-3">
                         <div className="min-w-0">
-                            <p className="w-fit border border-primary/20 bg-primary/5 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-primary sm:text-[10px]">
-                                {item.weightSize}
-                            </p>
-
-                            <h2 className="mt-2 line-clamp-2 font-display text-base font-semibold leading-tight text-ink sm:text-lg md:text-xl">
+                            <h2 className="uppercase line-clamp-2 font-display text-base font-semibold leading-tight text-ink sm:text-lg md:text-xl">
                                 {item.name?.[language]}
                             </h2>
 
@@ -1010,14 +1003,12 @@ const CartItem = ({ item, language, selected, onToggle, onUpdated }) => {
 
                             <div className="mt-1.5 flex items-baseline gap-2">
                                 <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink/50">
-                                    {isArabic
-                                        ? "إجمالي المنتج"
-                                        : "Item total"}
+                                    {isArabic ? "إجمالي المنتج" : "Item total"}
                                 </span>
 
                                 <span
                                     dir="ltr"
-                                    className="font-display text-lg font-semibold text-ink sm:text-xl"
+                                    className=" text-lg font-semibold text-ink sm:text-xl"
                                 >
                                     {formatPrice(lineTotal)}
                                 </span>
@@ -1055,13 +1046,7 @@ const CartItem = ({ item, language, selected, onToggle, onUpdated }) => {
     );
 };
 
-const FeaturedAddOn = ({
-    addOn,
-    language,
-    selected,
-    quantity,
-    onUpdated,
-}) => {
+const FeaturedAddOn = ({ addOn, language, selected, quantity, onUpdated }) => {
     const isArabic = language === "ar";
 
     const { mutate: addCartAddOn, isPending: isAdding } = usePost({
@@ -1337,7 +1322,7 @@ const AddOnCard = ({ addOn, language, selected, quantity, onUpdated }) => {
                                 (isArabic
                                     ? "تعذر تحديث كمية الإضافة"
                                     : "Unable to update add-on quantity"),
-                            );
+                        );
                     },
                 },
             );
@@ -1505,52 +1490,49 @@ const SummaryItem = ({
         Number(originalPrice ?? 0) > Number(unitPrice ?? 0);
 
     return (
-        <div className="flex items-center gap-3 rounded-[10px] border border-ink/10 bg-cream/70 p-2.5">
+        <div className="flex items-center gap-3 border-b border-ink/10 py-3 last:border-0">
             {image && (
-                <div className="size-12 shrink-0 overflow-hidden rounded-[8px] bg-blush/50">
+                <div className="size-12 shrink-0 overflow-hidden rounded-lg bg-ink/5">
                     <img
                         src={image}
                         alt={name}
-                        className="h-full w-full object-cover"
+                        className="size-full object-cover"
                     />
                 </div>
             )}
 
             <div className="min-w-0 flex-1">
-                <div className="flex items-start justify-between gap-2">
-                    <p className="line-clamp-1 text-sm font-semibold text-ink">
+                <div className="flex items-center justify-between gap-3">
+                    <p className="truncate text-sm font-semibold text-ink">
                         {name}
                     </p>
 
                     <span
                         dir="ltr"
-                        className="shrink-0 text-sm font-bold text-primary"
+                        className="shrink-0 text-sm font-semibold text-ink"
                     >
                         {formatPrice(lineTotal)}
                     </span>
                 </div>
 
-                <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                    <span
-                        dir="ltr"
-                        className="text-[11px] font-semibold text-ink/60"
-                    >
+                <div className="mt-1 flex items-center justify-between gap-2">
+                    <span dir="ltr" className="text-xs text-ink/55">
                         {formatPrice(unitPrice)} × {quantity}
                     </span>
 
                     {hasDiscount && (
-                        <>
+                        <div className="flex shrink-0 items-center gap-1.5">
                             <span
                                 dir="ltr"
-                                className="text-[10px] text-ink/45 line-through"
+                                className="text-[11px] text-ink/40 line-through"
                             >
                                 {formatPrice(originalPrice)}
                             </span>
 
-                            <span className="bg-primary px-1.5 py-0.5 text-[9px] font-semibold text-cream">
-                                -{discountPercentage}%
+                            <span className="rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                                {discountPercentage}% off
                             </span>
-                        </>
+                        </div>
                     )}
                 </div>
             </div>
