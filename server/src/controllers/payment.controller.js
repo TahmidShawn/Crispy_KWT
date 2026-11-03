@@ -130,6 +130,7 @@ export const createPayment = asyncHandler(async (req, res) => {
 });
 export const paymentCallback = asyncHandler(async (req, res) => {
 
+    const successUrl = `${process.env.CLIENT_URL}/payment/success`;
     const failedUrl = `${process.env.CLIENT_URL}/payment/failed`;
 
     const result = paymentCallbackSchema.safeParse(req.query);
@@ -171,7 +172,7 @@ export const paymentCallback = asyncHandler(async (req, res) => {
 
             if (markResult === "paid") {
                 return res.redirect(
-                    `${process.env.CLIENT_URL}/payment/success?orderId=${payment.order}`,
+                    `${successUrl}?orderId=${payment.order}`,
                 );
             }
 
@@ -181,7 +182,7 @@ export const paymentCallback = asyncHandler(async (req, res) => {
             );
 
             return res.redirect(
-                `${process.env.CLIENT_URL}/payment/failed?orderId=${payment.order}`,
+                `${failedUrl}?orderId=${payment.order}`,
             );
         }
 
@@ -198,7 +199,7 @@ export const paymentCallback = asyncHandler(async (req, res) => {
         }
 
         return res.redirect(
-            `${process.env.CLIENT_URL}/payment/failed?orderId=${payment.order}`,
+            `${failedUrl}?orderId=${payment.order}`,
         );
     } catch (error) {
         logger.error({ err: error }, "[paymentCallback] error");
