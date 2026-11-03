@@ -35,7 +35,8 @@ export const createPayment = asyncHandler(async (req, res) => {
         throw new ErrorHandler("This order can no longer be paid", 400);
     }
 
-
+    // Idempotent lookup: a pending payment already exists with an invoice.
+    // Return the SAME URL instead of creating a duplicate invoice.
     let payment = await Payment.findOne({
         order: order._id,
     });
@@ -129,8 +130,7 @@ export const createPayment = asyncHandler(async (req, res) => {
     }
 });
 export const paymentCallback = asyncHandler(async (req, res) => {
-
-    const successUrl = `${process.env.CLIENT_URL}/payment/success`;
+    // Base failed URL (no orderId yet — the payment record is resolved below).
     const failedUrl = `${process.env.CLIENT_URL}/payment/failed`;
 
     const result = paymentCallbackSchema.safeParse(req.query);
@@ -172,7 +172,7 @@ export const paymentCallback = asyncHandler(async (req, res) => {
 
             if (markResult === "paid") {
                 return res.redirect(
-                    `${successUrl}?orderId=${payment.order}`,
+                    `${process.env.CLIENT_URL}/payment/success?orderId=${payment.order}`,
                 );
             }
 
@@ -182,7 +182,7 @@ export const paymentCallback = asyncHandler(async (req, res) => {
             );
 
             return res.redirect(
-                `${failedUrl}?orderId=${payment.order}`,
+                `${process.env.CLIENT_URL}/payment/failed?orderId=${payment.order}`,
             );
         }
 
@@ -199,7 +199,7 @@ export const paymentCallback = asyncHandler(async (req, res) => {
         }
 
         return res.redirect(
-            `${failedUrl}?orderId=${payment.order}`,
+            `${process.env.CLIENT_URL}/payment/failed?orderId=${payment.order}`,
         );
     } catch (error) {
         logger.error({ err: error }, "[paymentCallback] error");
@@ -207,7 +207,7 @@ export const paymentCallback = asyncHandler(async (req, res) => {
     }
 });
 export const myFatoorahWebhook = asyncHandler(async (req, res) => {
-
+    // Verify the signature first. If invalid, do not trust the payload.
     if (!verifyMyFatoorahSignature(req)) {
         logger.warn("[webhook] invalid signature");
         return res.status(401).json({
@@ -226,6 +226,7 @@ export const myFatoorahWebhook = asyncHandler(async (req, res) => {
         });
     }
 
+    // Only handle the payment status change event.
     if (event.Event.Name !== "PAYMENT_STATUS_CHANGED") {
         logger.info({ eventName: event.Event.Name }, "[webhook] event ignored");
         return res.status(200).json({
@@ -244,7 +245,8 @@ export const myFatoorahWebhook = asyncHandler(async (req, res) => {
         });
     }
 
-
+    // Idempotency guard: a payment for this invoice already exists and is
+    // already paid -> do nothing, avoid double-confirmation.
     const existingPayment = await Payment.findOne({
         invoiceId: invoice.Id.toString(),
     });

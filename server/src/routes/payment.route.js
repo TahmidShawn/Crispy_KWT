@@ -17,8 +17,10 @@ router
         isAuthenticatedUser,
         validateRequest(createPaymentSchema),
         createPayment,
-    );
-router.route("/payments/callback").get(paymentCallback);
+    );
+
+router.route("/payments/callback").get(paymentCallback);
+
 router.route("/payments/webhook").post(webhookLimiter, myFatoorahWebhook);
 
 export default router;
