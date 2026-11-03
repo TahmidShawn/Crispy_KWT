@@ -213,7 +213,7 @@ const ProductReviews = ({
                     </div>
                 ) : (
                     <div className="px-5 py-8 text-center sm:px-6">
-                        <div className="mx-auto grid size-12 place-items-center rounded-tl-xl rounded-br-xl bg-blush text-primary">
+                        <div className="mx-auto grid size-12 place-items-center rounded-lg bg-blush text-primary">
                             <Star className="size-5" />
                         </div>
 
@@ -234,8 +234,8 @@ const ProductReviews = ({
 
             {/* Individual reviews */}
             {reviews.length === 0 ? (
-                <div className="rounded-[14px] border border-ink/10 bg-white/40 px-6 py-10 text-center">
-                    <div className="mx-auto grid size-12 place-items-center rounded-tl-xl rounded-br-xl bg-blush text-primary">
+                <div className=" border border-ink/10 bg-white/40 px-6 py-10 text-center">
+                    <div className="mx-auto grid size-12 place-items-center rounded-lg bg-blush text-primary">
                         <MessageSquare className="size-5" />
                     </div>
 

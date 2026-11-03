@@ -1,141 +1,189 @@
 import { Route, Routes } from "react-router";
 
 import RootLayout from "../layout/RootLayout";
+import DashboardLayout from "../layout/DashboardLayout";
 
 import Home from "../pages/home/Home";
+import Products from "@/pages/products/Products";
+import Cart from "@/pages/cart/Cart";
+import Checkout from "@/pages/checkout/Checkout";
+import OrderTracking from "@/pages/orderTracking/OrderTracking";
 
-import WhatsAppButton from "@/components/shared/whatsApp/WhatsAppButton";
-import ScrollToTop from "@/components/shared/scrollToTop/ScrollToTop";
-import RedirectIfAuthenticated from "@/components/guards/RedirectIfAuthenticated";
-import RequireAuth from "@/components/guards/RequireAuth";
-import Login from "@/pages/auth/login/Login";
 import Register from "@/pages/auth/register/Register";
+import Login from "@/pages/auth/login/Login";
 import VerifyEmail from "@/pages/auth/verifyEmail/VerifyEmail";
+
+import Dashboard from "@/pages/dashboard/Dashboard";
+import Orders from "@/pages/dashboard/orders/Orders";
+import OrderDetails from "@/pages/dashboard/orders/OrderDetails";
+import Settings from "@/pages/dashboard/settings/Settings";
+import ProductDetails from "@/pages/productDetails/ProductDetails";
 
 import AdminDashboardLayout from "@/layout/AdminDashboardLayout";
 import AdminDashboard from "@/pages/adminDashboard/AdminDashboard";
-import OrdersList from "@/pages/adminDashboard/orders/Orders";
-import OrderDetails from "@/pages/adminDashboard/orders/OrderDetails";
-import Cakes from "@/pages/adminDashboard/cakes/Cakes";
-import AddCakes from "@/pages/adminDashboard/cakes/AddCakes";
-import UpdateCake from "@/pages/adminDashboard/cakes/UpdateCake";
 import Categories from "@/pages/adminDashboard/categories/Categories";
 import AddCategory from "@/pages/adminDashboard/categories/AddCategory";
 import EditCategory from "@/pages/adminDashboard/categories/EditCategory";
-import AddOns from "@/pages/adminDashboard/addOns/AddOns";
+import AddCakes from "@/pages/adminDashboard/cakes/AddCakes";
+import Cakes from "@/pages/adminDashboard/cakes/Cakes";
+import UpdateCake from "@/pages/adminDashboard/cakes/UpdateCake";
 import AddAddOn from "@/pages/adminDashboard/addOns/AddAddOn";
+import AddOns from "@/pages/adminDashboard/addOns/AddOns";
 import EditAddOn from "@/pages/adminDashboard/addOns/EditAddOn";
+import AdminOrders from "@/pages/adminDashboard/orders/Orders";
+import AdminOrderDetails from "@/pages/adminDashboard/orders/OrderDetails";
 import Customers from "@/pages/adminDashboard/customers/Customers";
-import Products from "@/pages/products/Products";
-
-import ProductDetails from "@/pages/productDetails/ProductDetails";
-import Cart from "@/pages/cart/Cart";
-import Checkout from "@/pages/checkout/Checkout";
-
-import DashboardLayout from "@/layout/DashboardLayout";
-import Dashboard from "@/pages/dashboard/Dashboard";
-import Orders from "@/pages/dashboard/orders/Orders";
-import UserOrderDetails from "@/pages/dashboard/orders/OrderDetails";
-import Addresses from "@/pages/dashboard/addresses/Addresses";
-import OrderTracking from "@/pages/orderTracking/OrderTracking";
 import PaymentSuccess from "@/pages/paymentResult/PaymentSuccess";
 import PaymentFailed from "@/pages/paymentResult/PaymentFailed";
+import Policy from "@/pages/legal/Policy";
+import TermsConditions from "@/pages/legal/TermsConditions";
+
+import RequireAuth from "@/components/guards/RequireAuth";
+import RedirectIfAuthenticated from "@/components/guards/RedirectIfAuthenticated";
+
+import WhatsAppButton from "@/components/shared/whatsApp/WhatsAppButton";
+import NotFound from "@/pages/notFound/NotFound";
+import ScrollToTop from "@/components/shared/scrollToTop/ScrollToTop";
 
 const Router = () => {
     return (
         <>
             <ScrollToTop />
             <Routes>
-                {/* Public routes: anyone (logged in or not) can browse cakes */}
-                <Route element={<RootLayout />}>
-                    <Route index element={<Home />} />
-                    <Route path="/category/:slug" element={<Products />} />
-                    <Route path="/products" element={<Products />} />
-                    <Route path="/cake/:slug" element={<ProductDetails />} />
-                    <Route path="/order-tracking" element={<OrderTracking />} />
-                </Route>
-                {/* Auth routes: only accessible when not logged in */}
-                <Route element={<RedirectIfAuthenticated />}>
-                    <Route path="/auth/login" element={<Login />} />
-                    <Route path="/auth/register" element={<Register />} />
-                    <Route
-                        path="/auth/verify-email"
-                        element={<VerifyEmail />}
-                    />
-                </Route>
+            <Route element={<RootLayout />}>
+                <Route index element={<Home />} />
 
-                {/* User-only routes: login + user role required */}
-                <Route element={<RequireAuth roles={["user"]} />}>
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/checkout" element={<Checkout />} />
-                </Route>
+                
+                <Route path="/category/:slug" element={<Products />} />
 
-                {/* User dashboard routes: login + user role required */}
-                <Route element={<RequireAuth roles={["user"]} />}>
-                    <Route path="/dashboard" element={<DashboardLayout />}>
-                        <Route index element={<Dashboard />} />
-                        <Route path="orders" element={<Orders />} />
-                        <Route
-                            path="orders/:orderId"
-                            element={<UserOrderDetails />}
-                        />
-                        <Route path="addresses" element={<Addresses />} />
+                
+                <Route path="/cake/:slug" element={<ProductDetails />} />
+
+                
+                <Route path="/search" element={<Products />} />
+
+                <Route
+                    path="/cart"
+                    element={
+                        <RequireAuth roles={["user"]}>
+                            <Cart />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/checkout"
+                    element={
+                        <RequireAuth roles={["user"]}>
+                            <Checkout />
+                        </RequireAuth>
+                    }
+                />
+
+                <Route path="/order-tracking" element={<OrderTracking />} />
+
+                <Route path="/privacy" element={<Policy />} />
+
+                <Route path="/terms" element={<TermsConditions />} />
+
+                
+                <Route path="/404" element={<NotFound />} />
+
+                
+                <Route path="*" element={<NotFound />} />
+            </Route>
+
+            
+            <Route
+                path="/auth/register"
+                element={
+                    <RedirectIfAuthenticated>
+                        <Register />
+                    </RedirectIfAuthenticated>
+                }
+            />
+            <Route
+                path="/auth/login"
+                element={
+                    <RedirectIfAuthenticated>
+                        <Login />
+                    </RedirectIfAuthenticated>
+                }
+            />
+            <Route
+                path="/auth/verify-email"
+                element={
+                    <RedirectIfAuthenticated>
+                        <VerifyEmail />
+                    </RedirectIfAuthenticated>
+                }
+            />
+
+            
+            <Route element={<RequireAuth roles={["user"]} />}>
+                <Route path="/dashboard" element={<DashboardLayout />}>
+                    <Route index element={<Dashboard />} />
+
+                    <Route path="orders" element={<Orders />} />
+
+                    <Route path="orders/:orderId" element={<OrderDetails />} />
+
+                    <Route path="settings" element={<Settings />} />
+
+                    
+                    <Route path="*" element={<NotFound />} />
+                </Route>
+            </Route>
+
+            
+            <Route element={<RequireAuth roles={["admin"]} />}>
+                <Route path="/admin" element={<AdminDashboardLayout />}>
+                    <Route index element={<AdminDashboard />} />
+
+                    <Route path="categories">
+                        <Route index element={<Categories />} />
+                        <Route path="add" element={<AddCategory />} />
+                        <Route path=":id" element={<EditCategory />} />
                     </Route>
-                </Route>
-
-                {/* Admin-only routes: login + admin role required */}
-                <Route element={<RequireAuth roles={["admin"]} />}>
-                    <Route path="/admin" element={<AdminDashboardLayout />}>
-                        <Route index element={<AdminDashboard />} />
-
-                        <Route path="orders" element={<OrdersList />} />
-                        <Route path="orders/pending" element={<OrdersList />} />
-                        <Route
-                            path="orders/confirmed"
-                            element={<OrdersList />}
-                        />
-                        <Route
-                            path="orders/out-for-delivery"
-                            element={<OrdersList />}
-                        />
-                        <Route
-                            path="orders/delivered"
-                            element={<OrdersList />}
-                        />
-                        <Route
-                            path="orders/cancelled"
-                            element={<OrdersList />}
-                        />
-                        <Route
-                            path="orders/:orderId"
-                            element={<OrderDetails />}
-                        />
-
-                        <Route path="cakes" element={<Cakes />} />
-                        <Route path="cakes/add" element={<AddCakes />} />
-                        <Route path="cakes/:id" element={<UpdateCake />} />
-
-                        <Route path="categories" element={<Categories />} />
-                        <Route
-                            path="categories/add"
-                            element={<AddCategory />}
-                        />
-                        <Route
-                            path="categories/:id"
-                            element={<EditCategory />}
-                        />
-
-                        <Route path="add-ons" element={<AddOns />} />
-                        <Route path="add-ons/add" element={<AddAddOn />} />
-                        <Route path="add-ons/:id" element={<EditAddOn />} />
-
-                        <Route path="customers" element={<Customers />} />
+                    <Route path="cakes">
+                        <Route index element={<Cakes />} />
+                        <Route path="add" element={<AddCakes />} />
+                        <Route path=":id" element={<UpdateCake />} />
                     </Route>
+                    <Route path="add-ons">
+                        <Route index element={<AddOns />} />
+                        <Route path="add" element={<AddAddOn />} />
+                        <Route path=":id" element={<EditAddOn />} />
+                    </Route>
+                    <Route path="orders">
+                        <Route index element={<AdminOrders />} />
+                        <Route path="pending" element={<AdminOrders />} />
+                        <Route path="confirmed" element={<AdminOrders />} />
+                        <Route
+                            path="out-for-delivery"
+                            element={<AdminOrders />}
+                        />
+                        <Route path="delivered" element={<AdminOrders />} />
+                        <Route path="cancelled" element={<AdminOrders />} />
+                        <Route
+                            path=":orderId"
+                            element={<AdminOrderDetails />}
+                        />
+                    </Route>
+
+                    <Route path="customers" element={<Customers />} />
+
+                    
+                    <Route path="*" element={<NotFound />} />
                 </Route>
-                 <Route path="/payment/success" element={<PaymentSuccess />} />
+            </Route>
+            <Route path="/payment/success" element={<PaymentSuccess />} />
             <Route path="/payment/failed" element={<PaymentFailed />} />
+
+            
+            <Route path="*" element={<NotFound />} />
             </Routes>
 
+            
             <WhatsAppButton />
         </>
     );
