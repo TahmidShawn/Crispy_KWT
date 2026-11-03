@@ -165,7 +165,7 @@ const BottomBar = () => {
                             className="w-56 border border-ink/10 bg-white p-1 text-ink shadow-md rounded-lg"
                         >
                             <div className="flex items-center gap-3 rounded-xl bg-blush/70 p-3">
-                                <div className="flex size-9 shrink-0 items-center justify-center rounded-none rounded-tl-xl rounded-br-xl bg-primary text-white shadow-md shadow-primary/20">
+                                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg  bg-primary text-white shadow-md shadow-primary/20">
                                     <Cake className="size-4" />
                                 </div>
 

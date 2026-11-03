@@ -167,7 +167,7 @@ const DashboardLayout = () => {
                     
                     <div className="shrink-0 border-t border-border p-4">
                         <div className="mb-3 flex items-center gap-3 px-2">
-                            <div className="flex size-9 shrink-0 items-center justify-center rounded-none rounded-tl-xl rounded-br-xl bg-primary text-sm font-bold text-primary-foreground">
+                            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
                                 {userInitial}
                             </div>
 
@@ -260,7 +260,7 @@ const DashboardLayout = () => {
                                 
                                 <div className="shrink-0 border-t border-border p-4">
                                     <div className="mb-3 flex items-center gap-3 px-2">
-                                        <div className="flex size-9 shrink-0 items-center justify-center rounded-none rounded-tl-xl rounded-br-xl bg-primary text-sm font-bold text-primary-foreground">
+                                        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
                                             {userInitial}
                                         </div>
 

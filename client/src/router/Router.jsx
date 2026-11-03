@@ -38,6 +38,8 @@ import Orders from "@/pages/dashboard/orders/Orders";
 import UserOrderDetails from "@/pages/dashboard/orders/OrderDetails";
 import Addresses from "@/pages/dashboard/addresses/Addresses";
 import OrderTracking from "@/pages/orderTracking/OrderTracking";
+import PaymentSuccess from "@/pages/paymentResult/PaymentSuccess";
+import PaymentFailed from "@/pages/paymentResult/PaymentFailed";
 
 const Router = () => {
     return (
@@ -130,6 +132,8 @@ const Router = () => {
                         <Route path="customers" element={<Customers />} />
                     </Route>
                 </Route>
+                 <Route path="/payment/success" element={<PaymentSuccess />} />
+            <Route path="/payment/failed" element={<PaymentFailed />} />
             </Routes>
 
             <WhatsAppButton />

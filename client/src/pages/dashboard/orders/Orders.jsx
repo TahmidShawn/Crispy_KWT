@@ -93,7 +93,7 @@ const Orders = () => {
                                 : "When you place your first order, its details will appear here."}
                         </p>
 
-                        <Button asChild variant="asymmetric" className="mt-6 rounded-xl">
+                        <Button className="mt-6 rounded-xl">
                             <Link to="/">
                                 {isArabic ? "تسوق الكعكات" : "Browse cakes"}
                             </Link>

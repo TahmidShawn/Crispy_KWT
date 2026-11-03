@@ -1,3 +1,4 @@
+
 import {
     ArrowUpRight,
     Cake,
@@ -55,7 +56,7 @@ const pageButton = (isActive) =>
 
 const formatPrice = (price) => `${Number(price).toFixed(3)} KWD`;
 
-// 1 … 4 5 6 … 12 শৈলীর পেজ নম্বর
+// 1 … 4 5 6 … 12 style pagination
 const getPageNumbers = (current, total) => {
     if (total <= 7) {
         return Array.from({ length: total }, (_, index) => index + 1);
@@ -95,7 +96,7 @@ const Products = () => {
         searchParams.get("search")?.trim() ||
         "";
 
-    // Category পেজে "featured" মানে অ্যাডমিনের সাজানো ক্রম (display-order)
+    // Category page: featured means admin display order
     const sortParam =
         sort !== "featured" ? sort : slug ? "display-order" : null;
 
@@ -112,7 +113,7 @@ const Products = () => {
             sort: sortParam,
         }),
         page,
-        // feature কার্ড ২ ঘর নেয়, তাই 14টা = ঠিক 5 সারি (3 কলামে)
+        // Featured card takes two columns, so 14 = 5 rows on desktop.
         limit: 14,
     };
 
@@ -130,7 +131,7 @@ const Products = () => {
     const pagination = cakesResponse?.pagination;
     const totalCakes = pagination?.total ?? cakes.length;
 
-    // Categories (ProductFilters-এর সাথে একই queryKey, তাই cache শেয়ার হয়)
+    // Categories
     const { data: categoriesResponse } = useGet({
         url: "/categories",
         params: {
@@ -144,7 +145,7 @@ const Products = () => {
         (category) => category.slug === slug,
     );
 
-    // Dynamic category name (works whether `category` is an object or an array)
+    // Dynamic category name
     const firstCategory = cakes[0]?.category;
 
     const categoryName =
@@ -188,7 +189,9 @@ const Products = () => {
     const selectedFilters = [];
 
     if (filters.price) {
-        const range = priceRanges.find((item) => item.value === filters.price);
+        const range = priceRanges.find(
+            (item) => item.value === filters.price,
+        );
 
         if (range) {
             selectedFilters.push({
@@ -383,6 +386,7 @@ const Products = () => {
                         aria-hidden="true"
                         className="pointer-events-none absolute -inset-e-32 top-24 size-105 rounded-full bg-blush/50 blur-3xl"
                     />
+
                     <div
                         aria-hidden="true"
                         className="pointer-events-none absolute -inset-s-32 bottom-24 size-90 rounded-full bg-blush/40 blur-3xl"
@@ -496,11 +500,7 @@ const Products = () => {
                                             (_, index) => (
                                                 <div
                                                     key={index}
-                                                    className={`h-72.5 animate-pulse rounded-[14px] bg-ink/10 md:h-90 ${
-                                                        index === 0
-                                                            ? "lg:col-span-2"
-                                                            : ""
-                                                    }`}
+                                                    className="h-72.5 animate-pulse rounded-[14px] bg-ink/10 md:h-90"
                                                 />
                                             ),
                                         )}

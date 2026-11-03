@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import {
     Search,
@@ -5,6 +6,7 @@ import {
     ShoppingBag,
     LayoutDashboard,
     LogOut,
+    Package,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,10 +25,48 @@ import {
 
 const menuItem =
     "cursor-pointer rounded-md p-0 text-primary focus:bg-blush focus:text-primary";
+
 const menuInner =
     "flex h-9 w-full items-center gap-2 px-3 text-[13px] font-medium text-primary";
 
+// Search text suggestions
+const searchSuggestions = [
+    "Birthday",
+    "Birthday Cake",
+    "Black Forest",
+    "Blueberry",
+    "Brownie",
+    "Butterscotch",
+    "Chocolate",
+    "Chocolate Cake",
+    "Cheesecake",
+    "Cherry",
+    "Red Velvet",
+    "Strawberry",
+    "Vanilla",
+    "White Chocolate",
+    "Caramel",
+    "Coffee",
+    "Oreo",
+    "Pistachio",
+    "Lotus",
+    "Mango",
+];
+
 const Navbar = () => {
+    const navigate = useNavigate();
+    const searchRef = useRef(null);
+
+    const [search, setSearch] = useState("");
+    const [suggestionsOpen, setSuggestionsOpen] = useState(false);
+
+    const { language, setLanguage, t } = useLanguage();
+    const n = t.navbar;
+
+    const { isAuthenticated, isLoading, clearUser, user } = useAuth();
+    const isAdmin = user?.role === "admin";
+
+    // Cart
     const { data: cartResponse } = useGet({
         url: "/cart",
         queryKey: ["cart"],
@@ -34,19 +74,14 @@ const Navbar = () => {
     });
 
     const cartData = cartResponse?.data;
+
     const itemsCount =
-        cartData?.items?.reduce((total, item) => total + item.quantity, 0) ?? 0;
+        cartData?.items?.reduce(
+            (total, item) => total + item.quantity,
+            0,
+        ) ?? 0;
 
-    const navigate = useNavigate();
-    const [search, setSearch] = useState("");
-    const [suggestions, setSuggestions] = useState([]);
-    const [suggestionsOpen, setSuggestionsOpen] = useState(false);
-    const debounceRef = useRef(null);
-
-    const { language, setLanguage, t } = useLanguage();
-    const n = t.navbar;
-    const { isAuthenticated, isLoading, clearUser, user } = useAuth();
-    const isAdmin = user?.role === "admin";
+    // Logout
     const { mutate: logoutUser, isPending: isLoggingOut } = usePost({
         url: "/auth/logout",
         onSuccess: () => {
@@ -54,53 +89,58 @@ const Navbar = () => {
         },
     });
 
-    const {
-        data: suggestionsResponse,
-        isLoading: suggestionsLoading,
-    } = useGet({
-        url: "/cakes/search-suggestions",
-        params: search ? { q: search } : undefined,
-        queryKey: ["cake-suggestions", search],
-        enabled: Boolean(search) && search.length >= 1,
-        retry: false,
-    });
+    // Filter text suggestions
+    const filteredSuggestions = search.trim()
+        ? searchSuggestions
+              .filter((item) =>
+                  item.toLowerCase().includes(search.trim().toLowerCase()),
+              )
+              .slice(0, 6)
+        : [];
 
+    // Close suggestions when clicking outside
     useEffect(() => {
-        if (suggestionsResponse?.success) {
-            setSuggestions(suggestionsResponse.suggestions ?? []);
-        }
-    }, [suggestionsResponse]);
+        const handleClickOutside = (event) => {
+            if (
+                searchRef.current &&
+                !searchRef.current.contains(event.target)
+            ) {
+                setSuggestionsOpen(false);
+            }
+        };
 
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener(
+                "mousedown",
+                handleClickOutside,
+            );
+        };
+    }, []);
+
+    // Search input
     const handleSearchChange = (e) => {
-        const value = e.target.value;
-        setSearch(value);
-
-        if (debounceRef.current) {
-            clearTimeout(debounceRef.current);
-        }
-
-        if (value.trim()) {
-            debounceRef.current = setTimeout(() => {
-                setSuggestionsOpen(true);
-            }, 300);
-        } else {
-            setSuggestions([]);
-            setSuggestionsOpen(false);
-        }
+        setSearch(e.target.value);
+        setSuggestionsOpen(true);
     };
 
-    const handleSuggestionSelect = (slug) => {
-        setSearch("");
-        setSuggestions([]);
+    // Select text suggestion
+    const handleSuggestionSelect = (suggestion) => {
+        setSearch(suggestion);
         setSuggestionsOpen(false);
-        navigate(`/cake/${slug}`);
     };
 
+    // Submit search
     const handleSearchSubmit = (e) => {
         e.preventDefault();
+
+        const query = search.trim();
+
         setSuggestionsOpen(false);
-        if (search.trim()) {
-            navigate(`/products?query=${encodeURIComponent(search.trim())}`);
+
+        if (query) {
+            navigate(`/products?query=${encodeURIComponent(query)}`);
         }
     };
 
@@ -119,7 +159,10 @@ const Navbar = () => {
                 <Link
                     to="/"
                     onClick={() =>
-                        window.scrollTo({ top: 0, behavior: "smooth" })
+                        window.scrollTo({
+                            top: 0,
+                            behavior: "smooth",
+                        })
                     }
                     aria-label={n.brandLabel}
                     dir="ltr"
@@ -129,61 +172,62 @@ const Navbar = () => {
                 </Link>
 
                 {/* Search */}
-                <form
-                    role="search"
-                    onSubmit={handleSearchSubmit}
-                    className="order-3 flex h-10 w-full items-center gap-2.5 rounded-full border border-ink/15 bg-white ps-4 pe-1 transition focus-within:border-primary focus-within:ring-[3px] focus-within:ring-primary/10 md:order-none md:w-[min(470px,42vw)]"
+                <div
+                    ref={searchRef}
+                    className="relative order-3 w-full md:order-none md:w-[min(470px,42vw)]"
                 >
-                    <Search className="size-4 shrink-0 text-ink/60" />
-                    <Input
-                        value={search}
-                        onChange={handleSearchChange}
-                        onFocus={() => {
-                            if (search.trim()) setSuggestionsOpen(true);
-                        }}
-                        onBlur={() => {
-                            setTimeout(() => setSuggestionsOpen(false), 150);
-                        }}
-                        placeholder={n.searchPlaceholder}
-                        aria-label={n.searchLabel}
-                        className="h-auto min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-ink shadow-none placeholder:text-ink/50 focus-visible:ring-0"
-                    />
-                    <Button
-                        type="submit"
-                        className="h-8 rounded-full bg-primary px-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-white hover:bg-primary/90 rtl:text-xs rtl:tracking-normal"
+                    <form
+                        role="search"
+                        onSubmit={handleSearchSubmit}
+                        className="relative z-10 flex h-10 items-center gap-2.5 rounded-full border border-ink/15 bg-white ps-4 pe-1 transition focus-within:border-primary focus-within:ring-[3px] focus-within:ring-primary/10"
                     >
-                        {n.searchButton}
-                    </Button>
-                </form>
+                        <Search className="size-4 shrink-0 text-ink/60" />
 
-                {/* Search Suggestions Dropdown */}
-                {suggestionsOpen && suggestions.length > 0 && !suggestionsLoading && (
-                    <div
-                        className="absolute z-50 mt-1 w-[min(470px,42vw)] rounded-lg border border-ink/10 bg-cream px-2.5 shadow-sm md:w-full"
-                    >
-                        <div className="max-h-56 overflow-y-auto">
-                            {suggestions.map((item) => (
+                        <Input
+                            value={search}
+                            onChange={handleSearchChange}
+                            onFocus={() => {
+                                if (search.trim()) {
+                                    setSuggestionsOpen(true);
+                                }
+                            }}
+                            placeholder={n.searchPlaceholder}
+                            aria-label={n.searchLabel}
+                            autoComplete="off"
+                            className="h-auto min-w-0 flex-1 border-0 bg-transparent p-0 text-sm text-ink shadow-none placeholder:text-ink/50 focus-visible:ring-0"
+                        />
+
+                        <Button
+                            type="submit"
+                            className="h-8 shrink-0 rounded-full bg-primary px-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-white hover:bg-primary/90 rtl:text-xs rtl:tracking-normal"
+                        >
+                            {n.searchButton}
+                        </Button>
+                    </form>
+
+                    {/* Text Autocomplete */}
+                    {suggestionsOpen && filteredSuggestions.length > 0 && (
+                        <div className="absolute start-0 top-full z-50 mt-2 w-full overflow-hidden rounded-xl border border-ink/10 bg-white p-1.5 shadow-lg">
+                            {filteredSuggestions.map((suggestion) => (
                                 <button
-                                    key={item.id}
+                                    key={suggestion}
                                     type="button"
-                                    onClick={() => handleSuggestionSelect(item.slug)}
-                                    className="flex w-full items-center gap-3 px-3 py-2 text-sm text-ink transition-colors first:rounded-t-lg last:rounded-b-lg hover:bg-blush"
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    onClick={() =>
+                                        handleSuggestionSelect(suggestion)
+                                    }
+                                    className="w-full rounded-lg px-3 py-2.5 text-start text-sm font-medium text-ink transition-colors hover:bg-blush"
                                 >
-                                    <span className="flex-1 truncate font-medium text-ink">
-                                        {language === "ar"
-                                            ? item.name.ar
-                                            : item.name.en}
-                                    </span>
-                                    <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                                    {suggestion}
                                 </button>
                             ))}
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
-                    {/* Language toggle */}
+                    {/* Language Toggle */}
                     <div
                         role="group"
                         aria-label={n.chooseLanguage}
@@ -207,7 +251,18 @@ const Navbar = () => {
                         ))}
                     </div>
 
-                    {/* Auth state */}
+                    {/* Orders */}
+                    {isAuthenticated && !isAdmin && (
+                        <Link
+                            to="/order-tracking"
+                            aria-label={n.orders}
+                            className="hidden size-9 cursor-pointer items-center justify-center rounded-full text-ink transition hover:bg-blush focus-visible:ring-[3px] focus-visible:ring-primary/10 md:inline-flex"
+                        >
+                            <Package className="size-5" />
+                        </Link>
+                    )}
+
+                    {/* Auth State */}
                     {isLoading ? (
                         <button
                             type="button"
@@ -227,11 +282,15 @@ const Navbar = () => {
                                     <User className="size-5" />
                                 </button>
                             </DropdownMenuTrigger>
+
                             <DropdownMenuContent
                                 align="end"
                                 className="w-56 rounded-lg border-ink/10 bg-white p-1 text-ink shadow-md"
                             >
-                                <DropdownMenuItem asChild className={menuItem}>
+                                <DropdownMenuItem
+                                    asChild
+                                    className={menuItem}
+                                >
                                     <Link
                                         to={isAdmin ? "/admin" : "/dashboard"}
                                         className={menuInner}
@@ -240,6 +299,7 @@ const Navbar = () => {
                                         <span>{n.dashboard}</span>
                                     </Link>
                                 </DropdownMenuItem>
+
                                 {isAdmin && (
                                     <DropdownMenuItem
                                         asChild
@@ -254,6 +314,7 @@ const Navbar = () => {
                                         </Link>
                                     </DropdownMenuItem>
                                 )}
+
                                 <DropdownMenuItem
                                     onClick={handleLogout}
                                     disabled={isLoggingOut}
@@ -274,24 +335,23 @@ const Navbar = () => {
                         </Link>
                     )}
 
-                    {/* Cart (hidden for admin: admins cannot purchase) */}
+                    {/* Cart */}
                     {!isAdmin && (
-                        <Link to="/cart">
-                            <button
-                                type="button"
-                                aria-label={n.cartLabel.replace(
-                                    "{count}",
-                                    itemsCount,
-                                )}
-                                className="relative inline-flex size-9 cursor-pointer items-center justify-center rounded-full text-ink transition hover:bg-blush"
-                            >
-                                <ShoppingBag className="size-5" />
-                                {itemsCount > 0 && (
-                                    <span className="absolute end-0 top-0 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
-                                        {itemsCount > 9 ? "9+" : itemsCount}
-                                    </span>
-                                )}
-                            </button>
+                        <Link
+                            to="/cart"
+                            aria-label={n.cartLabel.replace(
+                                "{count}",
+                                itemsCount,
+                            )}
+                            className="relative inline-flex size-9 cursor-pointer items-center justify-center rounded-full text-ink transition hover:bg-blush"
+                        >
+                            <ShoppingBag className="size-5" />
+
+                            {itemsCount > 0 && (
+                                <span className="absolute end-0 top-0 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-white">
+                                    {itemsCount > 9 ? "9+" : itemsCount}
+                                </span>
+                            )}
                         </Link>
                     )}
                 </div>
