@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
@@ -6,7 +5,7 @@ import { Check, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import useGet from "@/hooks/useGet";
-import { PageTitle } from "@/components/shared/PageTitle";
+
 import usePurchase from "@/hooks/usePurchase";
 import useAuth from "@/hooks/useAuth";
 
@@ -73,8 +72,6 @@ const PaymentSuccess = () => {
 
     return (
         <>
-            <PageTitle title="Order Confirmed" />
-
             <main className="wrapper py-10 md:py-14">
                 <div className="mx-auto max-w-2xl border border-border bg-card p-8 text-center md:p-12">
                     <div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -107,8 +104,8 @@ const PaymentSuccess = () => {
 
                     {isError && (
                         <p className="mt-4 text-sm text-destructive">
-                            Unable to load your order details. Please check
-                            your orders page.
+                            Unable to load your order details. Please check your
+                            orders page.
                         </p>
                     )}
 
@@ -118,9 +115,7 @@ const PaymentSuccess = () => {
                                 Order number
                             </p>
 
-                            <p className="mt-1 font-semibold">
-                                {orderNumber}
-                            </p>
+                            <p className="mt-1 font-semibold">{orderNumber}</p>
                         </div>
                     )}
 
