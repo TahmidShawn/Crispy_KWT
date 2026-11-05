@@ -900,7 +900,7 @@ export default function UpdateCake() {
 
                     <Button
                         type="submit"
-                        variant="asymmetric"
+                       
                         size="lg"
                         disabled={isUpdating}
                     >

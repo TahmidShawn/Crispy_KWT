@@ -121,7 +121,7 @@ const PaymentSuccess = () => {
 
                     <div className="mt-8 flex flex-col justify-center gap-3 md:flex-row">
                         <Button
-                            variant="asymmetric"
+                           className={'p-5'}
                             size="lg"
                             onClick={() => navigate("/")}
                         >
@@ -129,7 +129,7 @@ const PaymentSuccess = () => {
                         </Button>
 
                         <Button
-                            variant="outline-asymmetric"
+                           className={'p-5'}
                             size="lg"
                             onClick={() => navigate("/dashboard/orders")}
                         >

@@ -8,8 +8,6 @@ import {
     User,
 } from "lucide-react";
 import { Link, useLocation } from "react-router";
-import { useQueryClient } from "@tanstack/react-query";
-
 import {
     Popover,
     PopoverContent,
@@ -25,17 +23,15 @@ const BottomBar = () => {
     const isArabic = language === "ar";
     const { pathname } = useLocation();
 
-    const { isAuthenticated, isLoading, user, clearUser } = useAuth();
+    const { isAuthenticated, isLoading, user, logout } = useAuth();
 
     const isAdmin = user?.role === "admin";
     const isCustomer = user?.role === "user";
-    const queryClient = useQueryClient();
 
     const { mutate: logoutUser, isPending: isLoggingOut } = usePost({
         url: "/auth/logout",
         onSuccess: () => {
-            clearUser();
-            queryClient.removeQueries({ queryKey: ["cart"] });
+            logout();
         },
     });
 

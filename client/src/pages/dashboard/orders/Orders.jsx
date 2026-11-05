@@ -49,14 +49,12 @@ const Orders = () => {
                 </p>
             </div>
 
-            
             {isLoading && (
                 <div className="flex min-h-60 items-center justify-center">
                     <Loader2 className="size-7 animate-spin text-primary" />
                 </div>
             )}
 
-            
             {isError && (
                 <Card className="rounded-2xl border bg-background shadow-none">
                     <CardContent className="p-10 text-center">
@@ -75,7 +73,6 @@ const Orders = () => {
                 </Card>
             )}
 
-            
             {!isLoading && !isError && orders.length === 0 && (
                 <Card className="rounded-2xl border bg-background shadow-none">
                     <CardContent className="flex flex-col items-center p-10 text-center">
@@ -93,15 +90,16 @@ const Orders = () => {
                                 : "When you place your first order, its details will appear here."}
                         </p>
 
-                        <Button className="mt-6 rounded-xl">
-                            <Link to="/">
-                                {isArabic ? "تسوق الكعكات" : "Browse cakes"}
-                            </Link>
-                        </Button>
+                        <Link
+                            to="/"
+                            className="mt-6 inline-flex w-fit items-center justify-center rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
+                        >
+                            {isArabic ? "تسوق الكعكات" : "Browse cakes"}
+                        </Link>
                     </CardContent>
                 </Card>
             )}
-            
+
             {!isLoading && !isError && orders.length > 0 && (
                 <div className="space-y-4">
                     {orders.map((order) => {
@@ -122,7 +120,9 @@ const Orders = () => {
                                             <div>
                                                 <div className="flex flex-wrap items-center gap-2">
                                                     <p className="font-semibold">
-                                                        {isArabic ? "طلب" : "Order"}{" "}
+                                                        {isArabic
+                                                            ? "طلب"
+                                                            : "Order"}{" "}
                                                         #{order.orderNumber}
                                                     </p>
 
@@ -140,7 +140,9 @@ const Orders = () => {
                                                 </div>
 
                                                 <p className="mt-1.5 text-sm text-muted-foreground">
-                                                    {isArabic ? "تم الطلب في" : "Placed on"}{" "}
+                                                    {isArabic
+                                                        ? "تم الطلب في"
+                                                        : "Placed on"}{" "}
                                                     {formatDate(
                                                         order.createdAt,
                                                         language,
@@ -176,20 +178,15 @@ const Orders = () => {
                                                 </p>
                                             </div>
 
-                                            <Button
-                                                asChild
-                                                variant="outline"
-                                                className="rounded-xl"
+                                            <Link
+                                                to={`/dashboard/orders/${order._id}`}
+                                                className="inline-flex w-fit items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold ml-0 lg:ml-6 text-white transition-colors hover:bg-primary/90"
                                             >
-                                                <Link
-                                                    to={`/dashboard/orders/${order._id}`}
-                                                >
-                                                    {isArabic
-                                                        ? "عرض الطلب"
-                                                        : "View order"}
-                                                    <ArrowUpRight className="ml-2 size-4" />
-                                                </Link>
-                                            </Button>
+                                                {isArabic
+                                                    ? "عرض الطلب"
+                                                    : "View order"}
+                                                <ArrowUpRight className="size-4" />
+                                            </Link>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -198,8 +195,6 @@ const Orders = () => {
                     })}
                 </div>
             )}
-
-
         </div>
     );
 };

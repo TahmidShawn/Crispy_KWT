@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import AuthContext from "@/context/AuthContext";
 import api from "@/api/axios";
@@ -6,6 +7,7 @@ import api from "@/api/axios";
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const queryClient = useQueryClient();
 
     const getCurrentUser = async () => {
         try {
@@ -31,12 +33,33 @@ const AuthProvider = ({ children }) => {
 
     const isAuthenticated = Boolean(user);
 
-    const refreshUser = () => {
-        return getCurrentUser();
+    const clearUserQueries = () => {
+        // Remove cached user-specific data (cart, orders, my-review) so that each
+        // component refetches with the newly authenticated user's data when the
+        // account changes. Without this the TanStack Query cache keeps serving the
+        // previous account's data until a full page refresh.
+        queryClient.removeQueries({ queryKey: ["cart"] });
+        queryClient.removeQueries({ queryKey: ["orders"] });
+        queryClient.removeQueries({ queryKey: ["myReview"] });
+    };
+
+    const refreshUser = async () => {
+        const data = await getCurrentUser();
+
+        // Once the user switches, clear stale caches so the UI (cart badge,
+        // orders list, ...) reflects the new account immediately.
+        clearUserQueries();
+
+        return data;
     };
 
     const clearUser = () => {
         setUser(null);
+    };
+
+    const logout = () => {
+        clearUser();
+        clearUserQueries();
     };
 
     return (
@@ -47,6 +70,7 @@ const AuthProvider = ({ children }) => {
                 isLoading,
                 refreshUser,
                 clearUser,
+                logout,
             }}
         >
             {children}

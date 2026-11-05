@@ -20,6 +20,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import useGet from "@/hooks/useGet";
 import useAddToCart from "@/hooks/useAddToCart";
 import useAuth from "@/hooks/useAuth";
+import useViewItem from "@/hooks/useViewItem";
 import { useGetMyCakeReview } from "@/hooks/useReviews";
 
 import ProductGallery from "./ProductGallery";
@@ -92,6 +93,9 @@ const ProductDetails = () => {
     const canReview = !hasReviewed && !isReviewStateLoading;
 
     const product = cakeResponse?.data;
+
+    // GA4 view_item for product detail page
+    useViewItem({ product });
 
     if (isLoading) {
         return (

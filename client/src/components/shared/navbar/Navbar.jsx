@@ -63,7 +63,7 @@ const Navbar = () => {
     const { language, setLanguage, t } = useLanguage();
     const n = t.navbar;
 
-    const { isAuthenticated, isLoading, clearUser, user } = useAuth();
+    const { isAuthenticated, isLoading, logout, user } = useAuth();
     const isAdmin = user?.role === "admin";
 
     // Cart
@@ -85,7 +85,7 @@ const Navbar = () => {
     const { mutate: logoutUser, isPending: isLoggingOut } = usePost({
         url: "/auth/logout",
         onSuccess: () => {
-            clearUser();
+            logout();
         },
     });
 

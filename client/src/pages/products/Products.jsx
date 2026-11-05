@@ -31,6 +31,7 @@ import {
 import { useLanguage } from "@/context/LanguageContext";
 import useGet from "@/hooks/useGet";
 import useAddToCart from "@/hooks/useAddToCart";
+import useViewItemList from "@/hooks/useViewItemList";
 
 import ProductFilters from "./ProductFilters";
 import { priceRanges, sizes } from "./filterOptions";
@@ -161,6 +162,13 @@ const Products = () => {
         isPending: isAddingToCart,
         pendingCakeId,
     } = useAddToCart();
+
+    // GA4 view_item_list for category / search listing pages
+    useViewItemList({
+        items: cakes,
+        itemListId: slug || (search ? "search" : "home"),
+        itemListName: categoryName || (search ? "Search Results" : "All Products"),
+    });
 
     const handleAddToCart = (event, cake) => {
         event.preventDefault();

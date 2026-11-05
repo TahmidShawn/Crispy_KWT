@@ -19,6 +19,7 @@ import {
     CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import LiveClock from "@/components/shared/liveClock/LiveClock";
 
 const navigationGroups = [
     {
@@ -207,9 +208,7 @@ const SidebarContent = memo(({ onNavigate }) => {
 
             <div className="border-t p-3">
                 <div className="rounded-xl bg-muted/60 p-3">
-                    <p className="text-xs font-medium">
-                            Crispy KWT Admin
-                        </p>
+                    <p className="text-xs font-medium">Crispy KWT Admin</p>
 
                     <p className="mt-1 text-xs text-muted-foreground">
                         Manage your store
@@ -239,40 +238,31 @@ export default function AdminDashboardLayout() {
                 </SheetContent>
 
                 <div className="min-h-screen lg:pl-64">
-                    <header className="sticky top-0 z-30 flex h-20 items-center border-b bg-background/95 px-4 backdrop-blur md:px-6">
-                        <div className="flex items-center gap-3">
-                            <SheetTrigger asChild>
-                                <Button
-                                    size="icon"
-                                    className="lg:hidden"
-                                    aria-label="Open menu"
-                                >
-                                    <Menu className="size-5" />
-                                </Button>
-                            </SheetTrigger>
+                    <header className="sticky top-0 z-30 flex h-20 items-center gap-3 border-b bg-background/95 px-4 backdrop-blur md:px-6">
+    <div className="flex min-w-0 flex-1 items-center gap-3">
+        <SheetTrigger asChild>
+            <Button
+                size="icon"
+                className="lg:hidden"
+                aria-label="Open menu"
+            >
+                <Menu className="size-5" />
+            </Button>
+        </SheetTrigger>
 
-                            <div>
-                                <h1 className="text-lg font-semibold">
-                                    Admin Dashboard
-                                </h1>
+        <div className="min-w-0">
+            <h1 className="truncate text-lg font-semibold">
+                Admin Dashboard
+            </h1>
 
-                                <p className="hidden text-xs text-muted-foreground sm:block">
-                                    Manage your Crispy KWT store
-                                </p>
-                            </div>
-                        </div>
+            <p className="hidden text-xs text-muted-foreground sm:block">
+                Manage your Crispy KWT store
+            </p>
+        </div>
+    </div>
 
-                        <div className="ml-auto flex items-center gap-2">
-                            <Button
-                                size="icon"
-                                className="relative"
-                            >
-                                <Bell className="size-5" />
-
-                                <span className="absolute right-2 top-2 size-2 rounded-full bg-primary" />
-                            </Button>
-                        </div>
-                    </header>
+    <LiveClock />
+</header>
 
                     <main className="p-4 md:p-6">
                         <Outlet />

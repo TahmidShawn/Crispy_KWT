@@ -1,5 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, ImagePlus, Languages, Loader2, TrendingUp, X } from "lucide-react";
+import {
+    ArrowLeft,
+    ImagePlus,
+    Languages,
+    Loader2,
+    TrendingUp,
+    X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
@@ -10,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 import useAutoTranslate from "@/hooks/useAutoTranslate";
 import usePost from "@/hooks/usePost";
@@ -56,6 +64,7 @@ const formatFileSize = (bytes) => {
 };
 
 export default function AddCategory() {
+    const queryClient = useQueryClient();
     const navigate = useNavigate();
 
     const [imagePreview, setImagePreview] = useState("");
@@ -185,10 +194,15 @@ export default function AddCategory() {
         data.append("isPopular", String(formData.isPopular));
 
         createCategory(data, {
-            onSuccess: (response) => {
+            onSuccess: async (response) => {
                 toast.success("Category created", {
                     description:
                         response?.message || "Category created successfully.",
+                });
+
+                await queryClient.invalidateQueries({
+                    queryKey: ["admin", "categories"],
+                    refetchType: "all",
                 });
 
                 navigate("/admin/categories");
@@ -212,7 +226,6 @@ export default function AddCategory() {
 
     return (
         <div className="mx-auto w-full max-w-7xl space-y-6 pb-10">
-            
             <div className="flex items-center gap-4">
                 <Button
                     asChild
@@ -238,7 +251,6 @@ export default function AddCategory() {
 
             <form onSubmit={handleSubmit(handleCreateCategory)} noValidate>
                 <div className="grid gap-6 xl:grid-cols-[1fr_320px]">
-                    
                     <div className="space-y-6">
                         <section className="rounded-2xl border bg-card">
                             <div className="border-b p-6">
@@ -252,7 +264,6 @@ export default function AddCategory() {
                             </div>
 
                             <div className="space-y-6 p-6">
-                                
                                 <div className="space-y-2">
                                     <Label htmlFor="image">
                                         Category Image
@@ -323,7 +334,6 @@ export default function AddCategory() {
                                     )}
                                 </div>
 
-                                
                                 <div className="grid gap-6 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <Label htmlFor="nameEn">
@@ -371,7 +381,6 @@ export default function AddCategory() {
                                     </div>
                                 </div>
 
-                                
                                 <div className="flex items-center justify-between rounded-2xl border p-4">
                                     <div>
                                         <Label
@@ -434,7 +443,6 @@ export default function AddCategory() {
                             </div>
                         </section>
 
-                        
                         <div className="flex items-center justify-end gap-3">
                             <Button
                                 type="button"
@@ -464,7 +472,6 @@ export default function AddCategory() {
                         </div>
                     </div>
 
-                    
                     <div className="h-fit rounded-2xl border bg-card">
                         <div className="border-b p-6">
                             <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10">

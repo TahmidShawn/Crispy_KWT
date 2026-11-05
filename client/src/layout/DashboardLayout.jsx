@@ -1,10 +1,4 @@
-import {
-    Clock,
-    LayoutDashboard,
-    LogOut,
-    Menu,
-    Package,
-} from "lucide-react";
+import { Clock, LayoutDashboard, LogOut, Menu, Package } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { NavLink, Outlet, useNavigate } from "react-router";
@@ -19,6 +13,7 @@ import {
 } from "@/components/ui/sheet";
 import useAuth from "@/hooks/useAuth";
 import usePost from "@/hooks/usePost";
+import LiveClock from "@/components/shared/liveClock/LiveClock";
 
 const navigation = [
     {
@@ -50,47 +45,6 @@ const getGreeting = (hour) => {
     return "Good night";
 };
 
-const LiveClock = () => {
-    const [now, setNow] = useState(() => new Date());
-
-    useEffect(() => {
-        const interval = setInterval(() => setNow(new Date()), 1000);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    const time = now.toLocaleTimeString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-    });
-
-    const date = now.toLocaleDateString("en-GB", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    });
-
-    return (
-        <div className="flex shrink-0 items-center gap-2.5 rounded-none rounded-tl-2xl rounded-br-2xl border border-border bg-card px-3 py-2 shadow-sm sm:gap-3 sm:px-4">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-primary">
-                <Clock className="size-4" />
-            </div>
-
-            <div className="leading-tight">
-                <p className="text-sm font-bold tabular-nums text-foreground">
-                    {time}
-                </p>
-
-                <p className="hidden text-[11px] text-muted-foreground sm:block">
-                    {date}
-                </p>
-            </div>
-        </div>
-    );
-};
-
 const DashboardLayout = () => {
     const [open, setOpen] = useState(false);
     const [greeting, setGreeting] = useState(() =>
@@ -98,9 +52,7 @@ const DashboardLayout = () => {
     );
 
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
-
-    const { user, clearUser } = useAuth();
+    const { user, logout } = useAuth();
 
     const userName = user?.username || "there";
     const userInitial = userName.trim().charAt(0).toUpperCase() || "C";
@@ -108,12 +60,10 @@ const DashboardLayout = () => {
     const { mutate: logoutUser, isPending: isLoggingOut } = usePost({
         url: "/auth/logout",
         onSuccess: () => {
-            clearUser();
-            queryClient.removeQueries({ queryKey: ["cart"] });
+            logout();
             navigate("/");
         },
     });
-
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -164,7 +114,6 @@ const DashboardLayout = () => {
                         })}
                     </nav>
 
-                    
                     <div className="shrink-0 border-t border-border p-4">
                         <div className="mb-3 flex items-center gap-3 px-2">
                             <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
@@ -195,7 +144,6 @@ const DashboardLayout = () => {
                     </div>
                 </aside>
 
-                
                 <div className="flex min-w-0 flex-1 flex-col">
                     <header className="sticky top-0 z-30 flex h-20 shrink-0 items-center gap-3 border-b border-border bg-background/95 px-4 backdrop-blur-md sm:gap-4 sm:px-6">
                         <Sheet open={open} onOpenChange={setOpen}>
@@ -257,7 +205,6 @@ const DashboardLayout = () => {
                                     })}
                                 </nav>
 
-                                
                                 <div className="shrink-0 border-t border-border p-4">
                                     <div className="mb-3 flex items-center gap-3 px-2">
                                         <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
@@ -291,7 +238,6 @@ const DashboardLayout = () => {
                             </SheetContent>
                         </Sheet>
 
-                        
                         <div className="min-w-0 flex-1">
                             <p className="text-[11px] font-medium text-muted-foreground sm:text-xs">
                                 {greeting}
@@ -302,7 +248,6 @@ const DashboardLayout = () => {
                             </h1>
                         </div>
 
-                        
                         <LiveClock />
                     </header>
 

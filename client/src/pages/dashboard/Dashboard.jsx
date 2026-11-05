@@ -190,20 +190,13 @@ const Dashboard = () => {
                                 </p>
                             </div>
 
-                            <Button
-                                asChild
-                                variant="ghost"
-                                size="sm"
-                                className="w-fit gap-1 rounded-lg"
+                            <Link
+                                to="/dashboard/orders"
+                                className="inline-flex w-full md:w-fit items-center gap-1.5 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
                             >
-                                <Link
-                                    to="/dashboard/orders"
-                                    className="flex items-center gap-1 bg-primary px-4 py-2.5 rounded-lg text-sm font-semibold text-white transition-colors hover:bg-primary/90"
-                                >
-                                    View all
-                                    <ArrowUpRight className="size-4" />
-                                </Link>
-                            </Button>
+                                View all
+                                <ArrowUpRight className="size-4" />
+                            </Link>
                         </CardHeader>
 
                         <CardContent className="px-5 py-1 sm:px-6">
@@ -275,17 +268,13 @@ const Dashboard = () => {
                                                 </p>
                                             </div>
 
-                                            <Button
-                                                asChild
-                                                variant="outline-asymmetric"
-                                                size="icon"
+                                            <Link
+                                                to={`/dashboard/orders/${order._id}`}
+                                                className="inline-flex size-9 items-center justify-center rounded-md bg-blush text-primary transition-colors hover:bg-blush/50"
+                                                aria-label="View order details"
                                             >
-                                                <Link
-                                                    to={`/dashboard/orders/${order._id}`}
-                                                >
-                                                    <ArrowUpRight className="size-4" />
-                                                </Link>
-                                            </Button>
+                                                <ArrowUpRight className="size-4" />
+                                            </Link>
                                         </div>
                                     </div>
 

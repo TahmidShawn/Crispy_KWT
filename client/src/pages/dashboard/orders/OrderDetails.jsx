@@ -1,20 +1,9 @@
-import {
-    ArrowLeft,
-    Clock3,
-    Loader2,
-    MapPin,
-    Package,
-} from "lucide-react";
+import { ArrowLeft, Clock3, Loader2, MapPin, Package } from "lucide-react";
 import { Link, useParams } from "react-router";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import OrderTimeline from "@/components/shared/orderTimeline/OrderTimeline";
 import { toast } from "sonner";
@@ -70,7 +59,6 @@ const CancelOrderButton = ({ orderId, onCancelled }) => {
     );
 };
 
-
 const OrderDetails = () => {
     const { orderId } = useParams();
     const { language } = useLanguage();
@@ -115,7 +103,9 @@ const OrderDetails = () => {
                 <Card className="rounded-2xl border bg-background shadow-none">
                     <CardContent className="p-10 text-center">
                         <h2 className="text-lg font-bold text-foreground">
-                            {isArabic ? "لم يتم العثور على الطلب" : "Order not found"}
+                            {isArabic
+                                ? "لم يتم العثور على الطلب"
+                                : "Order not found"}
                         </h2>
 
                         <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
@@ -139,18 +129,15 @@ const OrderDetails = () => {
     return (
         <div className="p-5 sm:p-7 lg:p-9">
             <div className="mb-7">
-                <Button
-                    asChild
-                    variant="ghost"
-                    className="-ml-3 mb-4 rounded-xl text-muted-foreground"
+                <Link
+                    to="/dashboard/orders"
+                    className="-ml-3 mb-4 inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
-                    <Link to="/dashboard/orders">
-                        <ArrowLeft className="mr-2 size-4" />
-                        {isArabic ? "رجوع إلى الطلبات" : "Back to orders"}
-                    </Link>
-                </Button>
+                    <ArrowLeft className="size-4" />
+                    {isArabic ? "رجوع إلى الطلبات" : "Back to orders"}
+                </Link>
 
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between mt-2">
                     <div>
                         <p className="mb-2 text-sm font-semibold text-primary">
                             {isArabic ? "تفاصيل الطلب" : "Order details"}
@@ -178,7 +165,6 @@ const OrderDetails = () => {
             </div>
 
             <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-                
                 <Card className="rounded-2xl border bg-background shadow-none">
                     <CardHeader className="px-5 py-5 sm:px-6">
                         <CardTitle className="text-lg">
@@ -223,9 +209,8 @@ const OrderDetails = () => {
                         </div>
                     </CardContent>
                 </Card>
-                
+
                 <div className="space-y-6">
-                    
                     <Card className="rounded-2xl border bg-background shadow-none">
                         <CardHeader className="px-5 py-5">
                             <CardTitle className="text-lg">
@@ -235,7 +220,10 @@ const OrderDetails = () => {
 
                         <CardContent className="space-y-4 px-5 pb-5">
                             {items.map((item, index) => (
-                                <div key={index} className="flex items-center gap-3">
+                                <div
+                                    key={index}
+                                    className="flex items-center gap-3"
+                                >
                                     {item.imageUrl ? (
                                         <img
                                             src={item.imageUrl}
@@ -302,7 +290,6 @@ const OrderDetails = () => {
                         </CardContent>
                     </Card>
 
-                    
                     <Card className="rounded-2xl border bg-background shadow-none">
                         <CardHeader className="px-5 py-5">
                             <CardTitle className="text-lg">
@@ -373,11 +360,12 @@ const OrderDetails = () => {
                         </CardContent>
                     </Card>
 
-                    
                     <Card className="rounded-2xl border bg-background shadow-none">
                         <CardHeader className="px-5 py-5">
                             <CardTitle className="text-lg">
-                                {isArabic ? "عنوان التوصيل" : "Delivery address"}
+                                {isArabic
+                                    ? "عنوان التوصيل"
+                                    : "Delivery address"}
                             </CardTitle>
                         </CardHeader>
 
@@ -417,7 +405,6 @@ const OrderDetails = () => {
                         </CardContent>
                     </Card>
 
-                    
                     {canCancel && (
                         <CancelOrderButton
                             orderId={order._id}

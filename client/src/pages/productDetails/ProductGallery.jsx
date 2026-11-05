@@ -1,16 +1,10 @@
 import { useState } from "react";
-import {
-    ChevronLeft,
-    ChevronRight,
-    Heart,
-    ZoomIn,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
 const ProductGallery = ({ product }) => {
     const [activeImage, setActiveImage] = useState(0);
-    const [liked, setLiked] = useState(false);
 
     const images = product.images || [];
 
@@ -87,34 +81,6 @@ const ProductGallery = ({ product }) => {
                             -{product.discountPercentage}% OFF
                         </span>
                     )}
-
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        aria-label={liked ? "Remove favorite" : "Add favorite"}
-                        aria-pressed={liked}
-                        onClick={() => setLiked((current) => !current)}
-                        className="absolute inset-e-4 top-4 z-10 size-10 rounded-full border-ink/10 bg-cream/95 text-ink shadow-none backdrop-blur-sm transition-colors hover:border-primary hover:bg-cream hover:text-primary md:inset-e-5 md:top-5"
-                    >
-                        <Heart
-                            className={`size-[18px] transition-colors ${
-                                liked
-                                    ? "fill-primary text-primary"
-                                    : "text-ink"
-                            }`}
-                        />
-                    </Button>
-
-                    <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        aria-label="Zoom image"
-                        className="absolute inset-e-4 bottom-4 z-10 size-10 rounded-full border-ink/10 bg-cream/95 text-ink shadow-none backdrop-blur-sm transition-colors hover:border-primary hover:bg-cream hover:text-primary md:inset-e-5 md:bottom-5"
-                    >
-                        <ZoomIn className="size-[18px]" />
-                    </Button>
 
                     {images.length > 1 && (
                         <>

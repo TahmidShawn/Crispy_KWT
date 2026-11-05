@@ -3,8 +3,9 @@ import gsap from "gsap";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
-import { useLanguage } from "@/context/LanguageContext"; // তোমার path অনুযায়ী ঠিক করে নাও
+import { useLanguage } from "@/context/LanguageContext";
 import { bannerImages } from "@/data/data";
+import useGet from "@/hooks/useGet";
 
 const CakeBanner = () => {
     const { t, language } = useLanguage();
@@ -15,15 +16,27 @@ const CakeBanner = () => {
     const slideRefs = useRef([]);
     const copyRef = useRef(null);
 
+    // Fetch active categories
+    const { data: categoriesResponse } = useGet({
+        url: "/categories",
+        params: { isActive: true },
+        queryKey: ["categories", "active"],
+    });
+
+    const categories = categoriesResponse?.data || [];
+    const firstCategory = categories[0];
+
+    const categoryLink = firstCategory
+        ? `/category/${firstCategory.slug}`
+        : "deals";
+
     const goTo = (i) => setActive((i + slides.length) % slides.length);
 
-    // Autoplay (manual click করলে timer reset হয়)
     useEffect(() => {
         const timer = setTimeout(() => goTo(active + 1), 6000);
         return () => clearTimeout(timer);
     }, [active]);
 
-    // Slide change animation (শুধু active বদলালে)
     useLayoutEffect(() => {
         slideRefs.current.forEach((el, i) => {
             if (!el) return;
@@ -52,7 +65,6 @@ const CakeBanner = () => {
         });
     }, [active]);
 
-    // Text animation (slide বা ভাষা বদলালে)
     useLayoutEffect(() => {
         gsap.fromTo(
             copyRef.current.children,
@@ -101,7 +113,7 @@ const CakeBanner = () => {
                 ))}
             </div>
 
-            {/* Overlay (RTL এ gradient উল্টে যায়, যাতে লেখার দিকে অন্ধকার থাকে) */}
+            {/* Overlay */}
             <div className="absolute inset-0 z-2 rtl:-scale-x-100 bg-[linear-gradient(90deg,rgba(30,20,18,.78),rgba(30,20,18,.25)),linear-gradient(0deg,rgba(27,18,16,.55),transparent_52%)] md:bg-[linear-gradient(90deg,rgba(30,20,18,.84)_0%,rgba(30,20,18,.58)_38%,rgba(30,20,18,.13)_72%,rgba(30,20,18,.08)_100%),linear-gradient(0deg,rgba(27,18,16,.42),transparent_42%)]" />
 
             {/* Content */}
@@ -118,14 +130,14 @@ const CakeBanner = () => {
                     </p>
                     <div className="mt-7 flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-7">
                         <Link
-                            to="deals"
+                            to={categoryLink}
                             className="inline-flex items-center gap-3.5 bg-primary px-6 py-3.5 text-[11px] font-semibold tracking-[0.04em] text-blush transition hover:bg-blush hover:text-ink rtl:tracking-normal"
                         >
                             {b.primaryCta}
                             <ArrowRight className="size-4 shrink-0 rtl:rotate-180" />
                         </Link>
                         <Link
-                            to="deals"
+                            to={categoryLink}
                             className="inline-flex items-center gap-3.5 border border-blush px-6 py-3.5 text-[11px] font-semibold tracking-[0.04em] text-cream transition hover:bg-blush hover:text-ink rtl:tracking-normal"
                         >
                             {b.secondaryCta}

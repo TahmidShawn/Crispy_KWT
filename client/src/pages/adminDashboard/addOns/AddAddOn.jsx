@@ -1,8 +1,10 @@
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, ImagePlus, Languages, Loader2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -36,7 +38,18 @@ const addOnSchema = z.object({
             "Please select a valid image file.",
         ),
 
-    price: z.string().trim().min(1, "Please enter the add-on price.").regex(/^\d+(\.\d{1,3})?$/, "Enter a valid KWD amount (up to 3 decimals).").refine((v) => Number(v) >= 0, "Price cannot be negative."),
+    price: z
+        .string()
+        .trim()
+        .min(1, "Please enter the add-on price.")
+        .regex(
+            /^\d+(\.\d{1,3})?$/,
+            "Enter a valid KWD amount (up to 3 decimals).",
+        )
+        .refine(
+            (value) => Number(value) >= 0,
+            "Price cannot be negative.",
+        ),
 
     isActive: z.boolean(),
 });
@@ -57,6 +70,7 @@ const formatFileSize = (bytes) => {
 
 export default function AddAddOn() {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     const [imagePreview, setImagePreview] = useState("");
 
@@ -184,10 +198,15 @@ export default function AddAddOn() {
         data.append("isActive", String(formData.isActive));
 
         createAddOn(data, {
-            onSuccess: (response) => {
+            onSuccess: async (response) => {
                 toast.success("Add-on created", {
                     description:
                         response?.message || "Add-on created successfully.",
+                });
+
+                await queryClient.invalidateQueries({
+                    queryKey: ["admin", "add-ons"],
+                    refetchType: "all",
                 });
 
                 navigate("/admin/add-ons");
@@ -211,7 +230,6 @@ export default function AddAddOn() {
 
     return (
         <div className="mx-auto w-full max-w-7xl space-y-6 pb-10">
-            
             <div className="flex items-center gap-4">
                 <Button
                     asChild
@@ -237,7 +255,6 @@ export default function AddAddOn() {
 
             <form onSubmit={handleSubmit(handleCreateAddOn)} noValidate>
                 <div className="grid gap-6 xl:grid-cols-[1fr_320px]">
-                    
                     <div className="space-y-6">
                         <section className="rounded-2xl border bg-card">
                             <div className="border-b p-6">
@@ -251,7 +268,6 @@ export default function AddAddOn() {
                             </div>
 
                             <div className="space-y-6 p-6">
-                                
                                 <div className="space-y-2">
                                     <Label htmlFor="image">
                                         Add-on Image
@@ -322,7 +338,6 @@ export default function AddAddOn() {
                                     )}
                                 </div>
 
-                                
                                 <div className="grid gap-6 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <Label htmlFor="nameEn">
@@ -370,7 +385,6 @@ export default function AddAddOn() {
                                     </div>
                                 </div>
 
-                                
                                 <div className="space-y-2">
                                     <Label htmlFor="price">
                                         Price (KWD)
@@ -391,7 +405,6 @@ export default function AddAddOn() {
                                     )}
                                 </div>
 
-                                
                                 <div className="flex items-center justify-between rounded-2xl border p-4">
                                     <div>
                                         <Label
@@ -420,7 +433,6 @@ export default function AddAddOn() {
                             </div>
                         </section>
 
-                        
                         <div className="flex items-center justify-end gap-3">
                             <Button
                                 type="button"
@@ -450,7 +462,6 @@ export default function AddAddOn() {
                         </div>
                     </div>
 
-                    
                     <div className="h-fit rounded-2xl border bg-card">
                         <div className="border-b p-6">
                             <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10">

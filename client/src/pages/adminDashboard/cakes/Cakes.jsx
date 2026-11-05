@@ -118,15 +118,13 @@ export default function Cakes() {
                         </p>
                     </div>
 
-                    <Button asChild variant="asymmetric" className="h-12 px-5">
-                        <Link
-                            to="/admin/cakes/add"
-                            className="flex items-center"
-                        >
-                            <Plus className="mr-2 size-4" />
-                            Add Cake
-                        </Link>
-                    </Button>
+                    <Link
+                        to="/admin/cakes/add"
+                        className="mt-6 inline-flex h-12 w-fit items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-white transition-colors hover:bg-primary/90"
+                    >
+                        <Plus className="size-4" />
+                        Add Cake
+                    </Link>
                 </div>
 
                 <div className="rounded-2xl border bg-background p-5">
@@ -317,7 +315,7 @@ export default function Cakes() {
                                                                 cake.name?.en ||
                                                                 "cake"
                                                             }`}
-                                                            className="size-10 rounded-lg  cursor-pointer text-white bg-primary hover:bg-red-500 hover:text-white" 
+                                                            className="size-10 rounded-lg  cursor-pointer text-white bg-primary hover:bg-red-500 hover:text-white"
                                                         >
                                                             <Trash2 className="size-4" />
                                                         </Button>

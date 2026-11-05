@@ -3,6 +3,7 @@ import { ArrowLeft, ImagePlus, Loader2, Upload, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 import { toast } from "sonner";
 
@@ -56,10 +57,12 @@ const addOnSchema = z.object({
 export default function EditAddOn() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const fileInputRef = useRef(null);
 
     const [imagePreview, setImagePreview] = useState(null);
     const [isNewImage, setIsNewImage] = useState(false);
+    const [removeExisting, setRemoveExisting] = useState(false);
 
     const {
         register,
@@ -94,10 +97,7 @@ export default function EditAddOn() {
 
     const addOn = addOnResponse?.data;
 
-    const {
-        mutate: updateAddOn,
-        isPending: isUpdating,
-    } = usePut({
+    const { mutate: updateAddOn, isPending: isUpdating } = usePut({
         url: `/admin/add-ons/${id}`,
         config: {
             headers: {
@@ -124,6 +124,7 @@ export default function EditAddOn() {
 
         setImagePreview(addOn.imageUrl || null);
         setIsNewImage(false);
+        setRemoveExisting(false);
     }, [addOn, reset]);
 
     useEffect(() => {
@@ -135,6 +136,7 @@ export default function EditAddOn() {
 
         setImagePreview(previewUrl);
         setIsNewImage(true);
+        setRemoveExisting(false);
 
         return () => {
             URL.revokeObjectURL(previewUrl);
@@ -154,21 +156,22 @@ export default function EditAddOn() {
         });
 
         // Reset the file input so selecting the same file again triggers onChange.
-        // Without this, re-selecting the same image does not fire a change event
-        // and the upload appears to stop working.
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
     };
 
+    // X button: removes whatever image is currently shown (old or new)
+    // and shows the upload box so a different image can be uploaded.
     const removeImage = () => {
         setValue("image", undefined, {
             shouldValidate: true,
             shouldDirty: true,
         });
 
-        setImagePreview(addOn?.imageUrl || null);
+        setImagePreview(null);
         setIsNewImage(false);
+        setRemoveExisting(true);
 
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
@@ -176,6 +179,13 @@ export default function EditAddOn() {
     };
 
     const onSubmit = (values) => {
+        // If the image is required by your backend, keep this check.
+        // If the image is optional, you can delete this block.
+        if (removeExisting && !(values.image instanceof File)) {
+            toast.error("Please upload a new image or keep the current one");
+            return;
+        }
+
         const formData = new FormData();
 
         formData.append("nameEn", values.nameEn.trim());
@@ -183,21 +193,28 @@ export default function EditAddOn() {
         formData.append("price", values.price.trim());
         formData.append("isActive", String(values.isActive));
 
-        // Always append the image field - if it's a File, upload it;
-        // if it's undefined, the server will know the user wants to remove the image
         if (values.image instanceof File) {
             formData.append("image", values.image);
-        } else {
-            // image is undefined (user clicked X to remove) - append null as string
-            // so the server can detect the intent to remove the image
-            formData.append("image", "");
+        } else if (removeExisting) {
+            formData.append("removeImage", "true");
         }
 
         updateAddOn(formData, {
-            onSuccess: (response) => {
+            onSuccess: async (response) => {
                 toast.success(
                     response?.message || "Add-on updated successfully",
                 );
+
+                await Promise.all([
+                    queryClient.invalidateQueries({
+                        queryKey: ["admin", "add-ons"],
+                        refetchType: "all",
+                    }),
+                    queryClient.invalidateQueries({
+                        queryKey: ["add-on", id],
+                        refetchType: "all",
+                    }),
+                ]);
 
                 navigate("/admin/add-ons");
             },
@@ -226,9 +243,7 @@ export default function EditAddOn() {
         return (
             <div className="mx-auto max-w-5xl">
                 <div className="rounded-2xl border bg-background p-8 text-center">
-                    <h2 className="text-lg font-semibold">
-                        Add-on not found
-                    </h2>
+                    <h2 className="text-lg font-semibold">Add-on not found</h2>
 
                     <p className="mt-2 text-sm text-muted-foreground">
                         The add-on you're trying to edit could not be found.
@@ -251,7 +266,6 @@ export default function EditAddOn() {
 
     return (
         <div className="mx-auto max-w-5xl space-y-6">
-
             <div className="flex items-center gap-4">
                 <Button
                     asChild
@@ -277,25 +291,21 @@ export default function EditAddOn() {
 
             <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
                 <div className="overflow-hidden rounded-2xl border bg-background">
-
                     <div className="border-b px-6 py-5">
-                        <h3 className="font-semibold">
-                            Add-on Information
-                        </h3>
+                        <h3 className="font-semibold">Add-on Information</h3>
 
                         <p className="mt-1 text-sm text-muted-foreground">
-                            Update the addOn name, image, and status.
+                            Update the add-on name, image, and status.
                         </p>
                     </div>
 
                     <div className="grid gap-8 p-6 lg:grid-cols-[1fr_1.15fr]">
-
                         <div className="space-y-3">
                             <div>
                                 <Label>Add-on Image</Label>
 
                                 <p className="mt-1 text-xs text-muted-foreground">
-                                    Upload a new image to replace the current
+                                    Remove the current image to upload a new
                                     one.
                                 </p>
                             </div>
@@ -308,20 +318,18 @@ export default function EditAddOn() {
                                 onChange={handleImageChange}
                             />
 
-                            {imagePreview && (
+                            {imagePreview ? (
                                 <div className="relative overflow-hidden rounded-2xl border bg-muted/20">
                                     <img
                                         src={imagePreview}
-                                        alt={
-                                            addOn.name?.en ||
-                                            "Add-on preview"
-                                        }
+                                        alt={addOn.name?.en || "Add-on preview"}
                                         className="aspect-square w-full object-cover"
                                     />
 
                                     <button
                                         type="button"
                                         onClick={removeImage}
+                                        aria-label="Remove image"
                                         className="absolute right-3 top-3 flex size-9 items-center justify-center rounded-full bg-background/90 shadow-sm backdrop-blur transition-colors hover:bg-background"
                                     >
                                         <X className="size-4" />
@@ -341,38 +349,36 @@ export default function EditAddOn() {
                                         )}
                                     </div>
                                 </div>
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        fileInputRef.current?.click()
+                                    }
+                                    className="group flex aspect-square w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-muted/20 px-6 text-center transition-all hover:border-primary/40 hover:bg-primary/[0.03]"
+                                >
+                                    <div className="flex size-14 items-center justify-center rounded-2xl bg-background shadow-sm transition-transform group-hover:-translate-y-1">
+                                        <ImagePlus className="size-6 text-primary" />
+                                    </div>
+
+                                    <p className="mt-5 text-sm font-semibold">
+                                        Upload add-on image
+                                    </p>
+
+                                    <p className="mt-1 max-w-xs text-xs leading-5 text-muted-foreground">
+                                        Choose an image for this add-on
+                                    </p>
+
+                                    <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
+                                        <Upload className="size-3.5" />
+                                        Choose image
+                                    </div>
+
+                                    <p className="mt-4 text-[11px] text-muted-foreground">
+                                        JPG, PNG or WEBP · Maximum 5MB
+                                    </p>
+                                </button>
                             )}
-
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    fileInputRef.current?.click()
-                                }
-                                className="group flex aspect-square w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-muted/20 px-6 text-center transition-all hover:border-primary/40 hover:bg-primary/[0.03]"
-                            >
-                                <div className="flex size-14 items-center justify-center rounded-2xl bg-background shadow-sm transition-transform group-hover:-translate-y-1">
-                                    <ImagePlus className="size-6 text-primary" />
-                                </div>
-
-                                <p className="mt-5 text-sm font-semibold">
-                                    {imagePreview
-                                        ? "Change add-on image"
-                                        : "Upload add-on image"}
-                                </p>
-
-                                <p className="mt-1 max-w-xs text-xs leading-5 text-muted-foreground">
-                                    Choose an image for this add-on
-                                </p>
-
-                                <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
-                                    <Upload className="size-3.5" />
-                                    Choose image
-                                </div>
-
-                                <p className="mt-4 text-[11px] text-muted-foreground">
-                                    JPG, PNG or WEBP · Maximum 5MB
-                                </p>
-                            </button>
 
                             {errors.image && (
                                 <p className="text-sm text-destructive">
@@ -382,7 +388,6 @@ export default function EditAddOn() {
                         </div>
 
                         <div className="flex flex-col space-y-6">
-
                             <div className="space-y-2">
                                 <Label htmlFor="nameEn">
                                     English Add-on Name
@@ -437,9 +442,7 @@ export default function EditAddOn() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="price">
-                                    Price (KWD)
-                                </Label>
+                                <Label htmlFor="price">Price (KWD)</Label>
 
                                 <Input
                                     id="price"
@@ -501,13 +504,13 @@ export default function EditAddOn() {
                                     </li>
 
                                     <li>
-                                        • Upload a new image only if you want
-                                        to replace the current one.
+                                        • Click the X on the image to remove it,
+                                        then upload a new one.
                                     </li>
 
                                     <li>
-                                        • Inactive add-ons will be hidden
-                                        from customers.
+                                        • Inactive add-ons will be hidden from
+                                        customers.
                                     </li>
                                 </ul>
                             </div>
@@ -520,17 +523,11 @@ export default function EditAddOn() {
                             variant="outline"
                             size="lg"
                             disabled={isUpdating}
-                            className="rounded-tl-2xl rounded-br-2xl"
                         >
                             <Link to="/admin/add-ons">Cancel</Link>
                         </Button>
 
-                        <Button
-                            type="submit"
-                            variant="asymmetric"
-                            size="lg"
-                            disabled={isUpdating}
-                        >
+                        <Button type="submit" size="lg" disabled={isUpdating}>
                             {isUpdating ? (
                                 <>
                                     <Loader2 className="mr-2 size-4 animate-spin" />
