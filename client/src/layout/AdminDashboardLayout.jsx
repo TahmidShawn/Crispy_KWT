@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/collapsible";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import LiveClock from "@/components/shared/liveClock/LiveClock";
+import { PageHead } from "@/components/shared/PageHead";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const navigationGroups = [
     {
@@ -226,8 +228,11 @@ export default function AdminDashboardLayout() {
         setMobileOpen(false);
     }, []);
 
+    usePageTitle();
+
     return (
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <PageHead />
             <div className="min-h-screen bg-muted/30">
                 <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r bg-background lg:block">
                     <SidebarContent />

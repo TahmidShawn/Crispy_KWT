@@ -1,6 +1,6 @@
-import { Clock, LayoutDashboard, LogOut, Menu, Package } from "lucide-react";
+import { LayoutDashboard, LogOut, Menu, Package } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+
 import { NavLink, Outlet, useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,8 @@ import {
 import useAuth from "@/hooks/useAuth";
 import usePost from "@/hooks/usePost";
 import LiveClock from "@/components/shared/liveClock/LiveClock";
+import { PageHead } from "@/components/shared/PageHead";
+import { usePageTitle } from "@/hooks/usePageTitle";
 
 const navigation = [
     {
@@ -65,6 +67,9 @@ const DashboardLayout = () => {
         },
     });
 
+    // Derive + apply the dynamic browser title for this route.
+    usePageTitle();
+
     useEffect(() => {
         const interval = setInterval(() => {
             setGreeting(getGreeting(new Date().getHours()));
@@ -79,6 +84,7 @@ const DashboardLayout = () => {
 
     return (
         <div className="min-h-screen bg-muted/40">
+            <PageHead />
             <div className="flex min-h-screen w-full">
                 <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-background lg:flex">
                     <div className="flex h-20 shrink-0 items-center border-b border-border px-6">

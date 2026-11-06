@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
+import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LanguageProvider } from "./context/LanguageContext";
@@ -20,18 +21,20 @@ const queryClient = new QueryClient({
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <BrowserRouter>
-            <QueryClientProvider client={queryClient}>
-                <GoogleOAuthProvider
-                    clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
-                >
-                    <LanguageProvider>
-                        <AuthProvider>
-                            <Router /> <Toaster />
-                        </AuthProvider>
-                    </LanguageProvider>
-                </GoogleOAuthProvider>
-            </QueryClientProvider>
-        </BrowserRouter>
+        <HelmetProvider>
+            <BrowserRouter>
+                <QueryClientProvider client={queryClient}>
+                    <GoogleOAuthProvider
+                        clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+                    >
+                        <LanguageProvider>
+                            <AuthProvider>
+                                <Router /> <Toaster />
+                            </AuthProvider>
+                        </LanguageProvider>
+                    </GoogleOAuthProvider>
+                </QueryClientProvider>
+            </BrowserRouter>
+        </HelmetProvider>
     </StrictMode>,
 );

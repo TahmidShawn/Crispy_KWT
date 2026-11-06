@@ -4,17 +4,23 @@ import Navbar from "@/components/shared/navbar/Navbar";
 import { Outlet, useLocation } from "react-router";
 
 import usePageView from "@/hooks/usePageView";
+import { PageHead } from "@/components/shared/PageHead";
+import { usePageTitle } from "@/hooks/usePageTitle";
 import SmoothScroll from "@/components/SmoothScroll";
 
 const RootLayout = () => {
     const { pathname } = useLocation();
     const isHome = pathname === "/";
 
+    // Derive + apply the dynamic browser title for this route.
+    usePageTitle();
+
     // GA4 page_view on every route change
     usePageView();
 
     return (
         <div className="flex min-h-screen flex-col">
+            <PageHead />
             <SmoothScroll />
             <Navbar />
 
