@@ -9,7 +9,6 @@ import {
     Plus,
     ShoppingCart,
     Star,
-    Tag,
     Users,
 } from "lucide-react";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
@@ -79,13 +78,11 @@ const ProductDetails = () => {
 
     const { addToCart, isPending: isAddingToCart } = useAddToCart();
 
-    const {
-        data: myReviewResponse,
-        isLoading: isMyReviewLoading,
-    } = useGetMyCakeReview({
-        slug,
-        enabled: Boolean(slug) && isAuthenticated,
-    });
+    const { data: myReviewResponse, isLoading: isMyReviewLoading } =
+        useGetMyCakeReview({
+            slug,
+            enabled: Boolean(slug) && isAuthenticated,
+        });
 
     const myReview = myReviewResponse?.data || null;
     const hasReviewed = Boolean(myReview);
@@ -104,9 +101,7 @@ const ProductDetails = () => {
                     <Loader2 className="size-7 animate-spin text-primary" />
 
                     <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink/50">
-                        {isArabic
-                            ? "جاري تحميل الكعكة..."
-                            : "Loading cake..."}
+                        {isArabic ? "جاري تحميل الكعكة..." : "Loading cake..."}
                     </p>
                 </div>
             </main>
@@ -130,11 +125,7 @@ const ProductDetails = () => {
                                 : "We couldn't find this cake. Explore our collection to discover more."}
                         </p>
 
-                        <Button
-                            asChild
-                            variant="asymmetric"
-                            className="mt-6"
-                        >
+                        <Button asChild variant="asymmetric" className="mt-6">
                             <Link to="/cakes">
                                 {isArabic ? "استكشف الكعكات" : "Explore cakes"}
                             </Link>
@@ -145,18 +136,13 @@ const ProductDetails = () => {
         );
     }
 
-    const productName =
-        product.name?.[language] || product.name?.en || "";
+    const productName = product.name?.[language] || product.name?.en || "";
 
     const categoryName =
-        product.category?.name?.[language] ||
-        product.category?.name?.en ||
-        "";
+        product.category?.name?.[language] || product.category?.name?.en || "";
 
     const description =
-        product.description?.[language] ||
-        product.description?.en ||
-        "";
+        product.description?.[language] || product.description?.en || "";
 
     const flavor =
         normalizeFlavors(product.flavor)
@@ -170,8 +156,7 @@ const ProductDetails = () => {
 
     const discountedPrice =
         product.discountPercentage > 0
-            ? originalPrice -
-              (originalPrice * product.discountPercentage) / 100
+            ? originalPrice - (originalPrice * product.discountPercentage) / 100
             : originalPrice;
 
     const isOutOfStock = Number(product.stock) <= 0;
@@ -180,9 +165,7 @@ const ProductDetails = () => {
         product.category?.imageUrl || product.images?.[0]?.url || "";
 
     const increaseQuantity = () => {
-        setQuantity((current) =>
-            Math.min(current + 1, Number(product.stock)),
-        );
+        setQuantity((current) => Math.min(current + 1, Number(product.stock)));
     };
 
     const decreaseQuantity = () => {
@@ -300,9 +283,9 @@ const ProductDetails = () => {
                                     <Star className="size-4 fill-cream text-cream" />
 
                                     <span className="text-base font-bold text-cream">
-                                        {Number(
-                                            product.avgRating || 0,
-                                        ).toFixed(1)}
+                                        {Number(product.avgRating || 0).toFixed(
+                                            1,
+                                        )}
                                     </span>
                                 </div>
 
@@ -405,21 +388,6 @@ const ProductDetails = () => {
                             <p className="mt-5 text-sm leading-7 text-ink/65">
                                 {description}
                             </p>
-
-                            {product.tags?.length > 0 && (
-                                <div className="mt-5 flex flex-wrap items-center gap-2">
-                                    <Tag className="me-1 size-3.5 text-primary" />
-
-                                    {product.tags.map((tag) => (
-                                        <span
-                                            key={tag}
-                                            className="border border-ink/10 bg-white/60 px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.06em] text-ink/60"
-                                        >
-                                            #{tag}
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
 
                             {/* Product attributes moved above quantity and cart */}
                             <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
@@ -687,14 +655,14 @@ const ProductAttribute = ({ icon: Icon, label, value, dir }) => {
             <div className="flex items-center gap-1.5 text-primary sm:gap-2">
                 <Icon className="size-3.5 shrink-0 sm:size-4" />
 
-                <span className="truncate text-[9px] font-bold uppercase tracking-[0.08em] sm:text-[10px] sm:tracking-wider">
+                <span className=" text-[9px] font-bold uppercase tracking-[0.08em] sm:text-[10px] sm:tracking-wider">
                     {label}
                 </span>
             </div>
 
             <p
                 dir={dir}
-                className="mt-2 truncate text-xs font-semibold text-ink sm:text-sm"
+                className="mt-2  text-xs font-semibold text-ink sm:text-sm"
             >
                 {value}
             </p>

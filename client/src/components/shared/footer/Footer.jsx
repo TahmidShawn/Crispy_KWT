@@ -1,7 +1,8 @@
-import { CakeSlice, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
 
 import { useLanguage } from "@/context/LanguageContext";
+import logo from "@/assets/crispyK.png";
 
 const Footer = () => {
     const { language } = useLanguage();
@@ -65,9 +66,11 @@ const Footer = () => {
                             to="/"
                             className="inline-flex items-center gap-2.5"
                         >
-                            <span className="grid size-10 place-items-center rounded-xl bg-primary text-cream">
-                                <CakeSlice className="size-5" />
-                            </span>
+                            <img
+                                src={logo}
+                                alt="Crispy KWT"
+                                className="size-10 rounded-xl object-contain"
+                            />
 
                             <span className="font-serif text-2xl font-bold tracking-tight text-primary">
                                 <span className="text-ink">CRISPY</span> KWT

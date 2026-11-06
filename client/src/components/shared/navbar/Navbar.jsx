@@ -21,7 +21,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import logo from "@/assets/crispy.jpg";
+import logo from "@/assets/crispyK.png";
 const menuItem =
     "cursor-pointer rounded-md p-0 text-primary focus:bg-blush focus:text-primary";
 
@@ -164,7 +164,7 @@ const Navbar = () => {
                     <img
                         src={logo}
                         alt=""
-                        className="size-10 shrink-0 object-contain md:size-11"
+                        className="size-10 shrink-0 object-contain md:size-13"
                     />
 
                     <span className="whitespace-nowrap font-serif text-xl font-semibold tracking-[-0.04em] md:text-2xl">
