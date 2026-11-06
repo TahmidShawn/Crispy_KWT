@@ -1,14 +1,9 @@
-import { useLayoutEffect, useRef } from "react";
 import { Flame, Loader2, Plus, Tag } from "lucide-react";
 import { Link } from "react-router";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { useLanguage } from "@/context/LanguageContext";
 import useGet from "@/hooks/useGet";
 import useAddToCart from "@/hooks/useAddToCart";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const HotDeals = ({
     eyebrow,
@@ -20,7 +15,6 @@ const HotDeals = ({
     const { language, t } = useLanguage();
     const isArabic = language === "ar";
     const { addToCart, pendingCakeId } = useAddToCart();
-    const sectionRef = useRef(null);
 
     // Custom headings enable recommendation mode.
     const isRecommendation = Boolean(eyebrow || title || subtitle);
@@ -48,168 +42,37 @@ const HotDeals = ({
                 return isAvailable && isNotExcluded;
             }
 
-            return isAvailable && Number(cake.discountPercentage) > 0;
+            return (
+                isAvailable &&
+                Number(cake.discountPercentage) > 0
+            );
         })
         .sort((a, b) => {
             if (isRecommendation) return 0;
 
             return (
-                Number(b.discountPercentage) - Number(a.discountPercentage)
+                Number(b.discountPercentage) -
+                Number(a.discountPercentage)
             );
         })
         .slice(0, isRecommendation ? limit : 8);
 
-    const getName = (cake) => cake.name?.[language] || cake.name?.en || "";
+    const getName = (cake) =>
+        cake.name?.[language] || cake.name?.en || "";
 
     const getCategoryName = (cake) => {
         const category = cake.category;
         return category?.name?.[language] || category?.name?.en || "";
     };
 
-    const formatPrice = (price) => `${Number(price).toFixed(3)} KWD`;
+    const formatPrice = (price) =>
+        `${Number(price).toFixed(3)} KWD`;
 
     const handleAddToCart = (event, cake) => {
         event.preventDefault();
         event.stopPropagation();
         addToCart(cake._id);
     };
-
-    // Scroll animation (অবশ্যই early return-এর আগে থাকতে হবে)
-    useLayoutEffect(() => {
-        if (isLoading || error || !cakes.length || !sectionRef.current) return;
-
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-            return;
-        }
-
-        const dir = isArabic ? -1 : 1;
-        const total = cakes.length;
-
-        const ctx = gsap.context(() => {
-            // ---------- Initial states: বাম পাশ ----------
-            gsap.set("[data-anim='line']", {
-                scaleX: 0,
-                transformOrigin: isArabic ? "right center" : "left center",
-            });
-            gsap.set("[data-anim='eyebrow']", { autoAlpha: 0, x: -24 * dir });
-            gsap.set("[data-anim='title-inner']", { yPercent: 110 });
-            gsap.set("[data-anim='subtitle']", { autoAlpha: 0, y: 12 });
-
-            // ---------- Initial states: ডান পাশ ----------
-            gsap.set("[data-anim='vline']", {
-                scaleY: 0,
-                transformOrigin: "top center",
-            });
-            gsap.set("[data-anim='label']", { autoAlpha: 0, x: -24 * dir });
-            gsap.set("[data-anim='sublabel']", { autoAlpha: 0, y: 10 });
-
-            // ---------- Cards ----------
-            const cards = gsap.utils.toArray("[data-anim='card']");
-            gsap.set(cards, { autoAlpha: 0, y: 32 });
-
-            // ---------- Counter: শুরুতে 00 ----------
-            const counter = { val: 0 };
-            const numEl = sectionRef.current.querySelector(
-                "[data-anim='number']",
-            );
-            if (numEl) numEl.textContent = "00";
-
-            // ---------- Heading timeline ----------
-            gsap.timeline({
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "top 78%",
-                    toggleActions: "play none none reset",
-                },
-            })
-                // ===== বাম পাশ =====
-                .to(
-                    "[data-anim='line']",
-                    { scaleX: 1, duration: 0.9, ease: "power3.inOut" },
-                    0,
-                )
-                .to(
-                    "[data-anim='eyebrow']",
-                    { autoAlpha: 1, x: 0, duration: 0.9, ease: "power3.out" },
-                    0.15,
-                )
-                .to(
-                    "[data-anim='title-inner']",
-                    { yPercent: 0, duration: 1.2, ease: "expo.out" },
-                    0.25,
-                )
-                .to(
-                    "[data-anim='subtitle']",
-                    { autoAlpha: 1, y: 0, duration: 1.2, ease: "power2.out" },
-                    0.6,
-                )
-                // ===== ডান পাশ =====
-                .to(
-                    "[data-anim='vline']",
-                    { scaleY: 1, duration: 0.9, ease: "power3.inOut" },
-                    0.35,
-                )
-                .to(
-                    "[data-anim='label']",
-                    { autoAlpha: 1, x: 0, duration: 0.9, ease: "power3.out" },
-                    0.55,
-                )
-                .to(
-                    "[data-anim='sublabel']",
-                    { autoAlpha: 1, y: 0, duration: 1.2, ease: "power2.out" },
-                    0.75,
-                );
-
-            // ---------- Counter ----------
-            let last = -1;
-
-            const counterTween = gsap.to(counter, {
-                val: total,
-                duration: 2.5,
-                ease: "power1.out",
-                paused: true,
-                snap: { val: 1 }, // শুধু পূর্ণ সংখ্যা
-                onUpdate: () => {
-                    // সংখ্যা বদলালে তবেই DOM আপডেট
-                    if (!numEl || counter.val === last) return;
-                    last = counter.val;
-                    numEl.textContent = String(counter.val).padStart(2, "0");
-                },
-            });
-
-            ScrollTrigger.create({
-                trigger: sectionRef.current,
-                start: "top 80%",
-                onEnter: () => counterTween.restart(),
-                onLeaveBack: () => {
-                    counterTween.pause(0);
-                    counter.val = 0;
-                    last = 0;
-                    if (numEl) numEl.textContent = "00";
-                },
-            });
-
-            // ---------- Cards: নরম fade-up ----------
-            ScrollTrigger.batch(cards, {
-                start: "top 90%",
-                onEnter: (batch) =>
-                    gsap.to(batch, {
-                        autoAlpha: 1,
-                        y: 0,
-                        duration: 1,
-                        ease: "power3.out",
-                        stagger: 0.1,
-                        overwrite: true,
-                    }),
-                onLeaveBack: (batch) =>
-                    gsap.set(batch, { autoAlpha: 0, y: 32, overwrite: true }),
-            });
-
-            ScrollTrigger.refresh();
-        }, sectionRef);
-
-        return () => ctx.revert();
-    }, [isLoading, error, cakes.length, isArabic]);
 
     if (isLoading) {
         return (
@@ -260,38 +123,24 @@ const HotDeals = ({
             : "Your favorite cakes, now at irresistible prices.");
 
     return (
-        <section ref={sectionRef} className="py-2">
+        <section className="py-2">
             <div className="wrapper">
                 {/* Section heading */}
                 <div className="mb-10 flex flex-col gap-6 md:mb-12 md:flex-row md:items-end md:justify-between">
                     <div className="max-w-xl">
-                        {/* Eyebrow */}
                         <div className="flex items-center gap-3">
-                            <span
-                                data-anim="line"
-                                className="h-px w-8 bg-ink"
-                            />
+                            <span className="h-px w-8 bg-ink" />
 
-                            <span
-                                data-anim="eyebrow"
-                                className="text-[10px] font-semibold uppercase tracking-[0.17em] text-ink"
-                            >
+                            <span className="text-[10px] font-semibold uppercase tracking-[0.17em] text-ink">
                                 {sectionEyebrow}
                             </span>
                         </div>
 
-                        {/* Title (overflow-hidden wrapper = mask) */}
-                        <h2 className="mt-3 overflow-hidden pb-1 font-serif text-[34px] font-semibold leading-[1.08] tracking-[-0.045em] text-primary md:text-5xl">
-                            <span data-anim="title-inner" className="block">
-                                {sectionTitle}
-                            </span>
+                        <h2 className="mt-3 font-serif text-[34px] font-semibold leading-[1.08] tracking-[-0.045em] text-primary md:text-5xl">
+                            {sectionTitle}
                         </h2>
 
-                        {/* Subtitle */}
-                        <p
-                            data-anim="subtitle"
-                            className="mt-3 max-w-md text-sm leading-relaxed text-ink/70"
-                        >
+                        <p className="mt-3 max-w-md text-sm leading-relaxed text-ink/70">
                             {sectionSubtitle}
                         </p>
                     </div>
@@ -299,21 +148,12 @@ const HotDeals = ({
                     {/* Deal count */}
                     <div className="flex items-center justify-between gap-4 self-stretch md:self-auto">
                         <div className="flex items-center gap-3">
-                            <span
-                                data-anim="number"
-                                className="font-serif text-5xl font-semibold leading-none tabular-nums text-primary md:text-6xl"
-                            >
+                            <span className="font-serif text-5xl font-semibold leading-none text-primary md:text-6xl">
                                 {String(cakes.length).padStart(2, "0")}
                             </span>
 
-                            <div className="relative flex flex-col gap-0.5 ps-3 text-[10px] font-semibold uppercase leading-tight tracking-[0.15em]">
-                                {/* border-s এর বদলে এই রেখা, যাতে animate করা যায় */}
-                                <span
-                                    data-anim="vline"
-                                    className="absolute inset-y-0 start-0 w-px bg-ink/25"
-                                />
-
-                                <span data-anim="label" className="text-ink">
+                            <div className="flex flex-col gap-0.5 border-s border-ink/15 ps-3 text-[10px] font-semibold uppercase leading-tight tracking-[0.15em]">
+                                <span className="text-ink">
                                     {isRecommendation
                                         ? isArabic
                                             ? "اقتراحات"
@@ -323,10 +163,7 @@ const HotDeals = ({
                                           : "Hot deals"}
                                 </span>
 
-                                <span
-                                    data-anim="sublabel"
-                                    className="text-ink/45"
-                                >
+                                <span className="text-ink/45">
                                     {isArabic
                                         ? "متاحة الآن"
                                         : "available now"}
@@ -341,7 +178,9 @@ const HotDeals = ({
                     {cakes.map((cake) => {
                         const image = cake.images?.[0]?.url;
                         const originalPrice = Number(cake.price);
-                        const discount = Number(cake.discountPercentage);
+                        const discount = Number(
+                            cake.discountPercentage,
+                        );
 
                         const discountedPrice = Number(
                             cake.discountedPrice ??
@@ -351,7 +190,6 @@ const HotDeals = ({
                         return (
                             <article
                                 key={cake._id}
-                                data-anim="card"
                                 className="group relative block h-[290px] overflow-hidden rounded-[14px] bg-ink text-cream md:h-[340px]"
                             >
                                 {/* Product image */}
@@ -391,34 +229,30 @@ const HotDeals = ({
                                             to={`/cake/${cake.slug}`}
                                             className="pointer-events-auto block"
                                         >
-                                            <h3 className="mb-3 truncate font-serif text-xl font-semibold text-cream transition-opacity group-hover:opacity-85 md:text-2xl">
+                                            <h3 className="mb-3 font-serif text-lg font-semibold text-cream transition-opacity group-hover:opacity-85 md:text-2xl">
                                                 {getName(cake)}
                                             </h3>
                                         </Link>
 
                                         <div className="mb-4 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                                            <span className="text-md font-bold text-cream md:text-xl">
+                                            <span className="text-sm font-bold text-cream md:text-xl">
                                                 {formatPrice(
-                                                    !isRecommendation &&
-                                                        discount > 0
+                                                    !isRecommendation && discount > 0
                                                         ? discountedPrice
                                                         : originalPrice,
                                                 )}
                                             </span>
 
-                                            {!isRecommendation &&
-                                                discount > 0 && (
-                                                    <span className="text-xs text-cream/65 line-through">
-                                                        {formatPrice(
-                                                            originalPrice,
-                                                        )}
-                                                    </span>
-                                                )}
+                                            {!isRecommendation && discount > 0 && (
+                                                <span className="text-[9px] md:text-xs text-cream/65 line-through">
+                                                    {formatPrice(originalPrice)}
+                                                </span>
+                                            )}
                                         </div>
 
-                                        <span className="pointer-events-auto inline-flex items-center border border-cream/40 bg-cream px-2.5 py-2 text-[10px] font-medium uppercase tracking-[0.12em] text-primary">
+                                        <h2 className="pointer-events-auto inline-flex items-center border border-cream/40 bg-cream px-2.5 py-2 text-[7px] truncate md:text-[10px] font-medium uppercase tracking-[0.12em] text-primary">
                                             {getCategoryName(cake)}
-                                        </span>
+                                        </h2>
                                     </div>
 
                                     {/* Add to cart */}
@@ -434,14 +268,18 @@ const HotDeals = ({
                                                 ? "أضف إلى السلة"
                                                 : "Add to cart"
                                         }
-                                        onClick={(event) =>
-                                            handleAddToCart(event, cake)
-                                        }
+                                        onClick={(event) => {
+                                            event.preventDefault();
+                                            event.stopPropagation();
+                                            handleAddToCart(event, cake);
+                                        }}
                                         disabled={pendingCakeId === cake._id}
-                                        className="pointer-events-auto grid size-9 shrink-0 cursor-pointer place-items-center border border-white/45 bg-white/5 text-white transition-colors duration-200 hover:bg-cream hover:text-primary group-hover:bg-cream group-hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream disabled:cursor-not-allowed disabled:opacity-40"
+                                        className="pointer-events-auto grid size-7 md:size-9 shrink-0 cursor-pointer place-items-center border border-white/45 bg-white/5 text-white transition-colors duration-200 hover:bg-cream hover:text-primary group-hover:bg-cream group-hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream disabled:cursor-not-allowed disabled:opacity-40"
                                     >
                                         {pendingCakeId === cake._id ? (
-                                            <Loader2 className="size-5 animate-spin" />
+                                            <Loader2
+                                                className="size-5 animate-spin"
+                                            />
                                         ) : (
                                             <Plus className="size-5" />
                                         )}

@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useLocation, useNavigate } from "react-router";
 import {
+    CalendarDays,
     Check,
     ChevronRight,
     CreditCard,
@@ -11,6 +12,7 @@ import {
     Sparkles,
     TriangleAlert,
     Wallet,
+    Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -67,7 +69,30 @@ const FIELD_LIMITS = {
 
 const MIN_ONLINE_TOTAL = 0.1;
 
+// backend-এর utils/kuwaitDate.js এর সঙ্গে মিল রাখুন
+const MAX_SCHEDULE_DAYS = 60;
+
 const formatPrice = (price) => `${Number(price).toFixed(3)} KWD`;
+
+// Kuwait সময় অনুযায়ী "YYYY-MM-DD" (ব্রাউজারের timezone যাই হোক)
+const getKuwaitDateString = (offsetDays = 0) =>
+    new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kuwait",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    }).format(new Date(Date.now() + offsetDays * 24 * 60 * 60 * 1000));
+
+const formatScheduledDate = (value, isArabic) =>
+    new Date(`${value}T12:00:00`).toLocaleDateString(
+        isArabic ? "ar-KW" : "en-GB",
+        {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        },
+    );
 
 const extractKuwaitLocalNumber = (phone = "") => {
     let digits = String(phone).replace(/\D/g, "");
@@ -225,8 +250,22 @@ const Checkout = () => {
     });
     const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState(null);
+    const [deliveryType, setDeliveryType] = useState("now"); // "now" | "later"
+    const [scheduledDate, setScheduledDate] = useState(""); // YYYY-MM-DD
     const [orderPlaced, setOrderPlaced] = useState(false);
     const [placedOrder, setPlacedOrder] = useState(null);
+
+    useEffect(() => {
+        if (!orderPlaced) return;
+
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "smooth",
+        });
+    }, [orderPlaced]);
+    const minDate = getKuwaitDateString(1);
+    const maxDate = getKuwaitDateString(MAX_SCHEDULE_DAYS);
 
     const {
         data: cartResponse,
@@ -372,6 +411,14 @@ const Checkout = () => {
         }));
     };
 
+    const handleSelectDeliveryType = (value) => {
+        setDeliveryType(value);
+
+        if (value === "now") {
+            setScheduledDate("");
+        }
+    };
+
     const handleOpenAddressModal = () => {
         setAddress(
             savedAddress
@@ -428,10 +475,7 @@ const Checkout = () => {
 
         if (!localPhone) {
             toast.error(
-                tr(
-                    "Please enter your phone number.",
-                    "يرجى إدخال رقم هاتفك.",
-                ),
+                tr("Please enter your phone number.", "يرجى إدخال رقم هاتفك."),
             );
             return;
         }
@@ -448,10 +492,7 @@ const Checkout = () => {
 
         if (!address.governorate) {
             toast.error(
-                tr(
-                    "Please select your governorate.",
-                    "يرجى اختيار المحافظة.",
-                ),
+                tr("Please select your governorate.", "يرجى اختيار المحافظة."),
             );
             return;
         }
@@ -508,6 +549,28 @@ const Checkout = () => {
             return;
         }
 
+        if (deliveryType === "later") {
+            if (!scheduledDate) {
+                toast.error(
+                    tr(
+                        "Please select a delivery date.",
+                        "يرجى اختيار تاريخ التوصيل.",
+                    ),
+                );
+                return;
+            }
+
+            if (scheduledDate < minDate || scheduledDate > maxDate) {
+                toast.error(
+                    tr(
+                        "Please choose a valid delivery date.",
+                        "يرجى اختيار تاريخ توصيل صالح.",
+                    ),
+                );
+                return;
+            }
+        }
+
         if (!paymentMethod) {
             toast.error(
                 tr(
@@ -547,6 +610,8 @@ const Checkout = () => {
             })),
             shippingAddress: savedAddress,
             paymentMethod,
+            deliveryType,
+            ...(deliveryType === "later" ? { scheduledDate } : {}),
         };
 
         createOrder(payload, {
@@ -713,6 +778,21 @@ const Checkout = () => {
                                 </div>
                             )}
 
+                            {placedOrder?.delivery?.mode === "later" &&
+                                placedOrder?.delivery?.scheduledDate && (
+                                    <div className="mb-6 flex w-full items-center justify-center gap-2 border border-primary/25 bg-blush/30 px-4 py-3 text-sm font-medium text-primary">
+                                        <CalendarDays className="size-4" />
+                                        {tr(
+                                            "Scheduled for",
+                                            "موعد التوصيل",
+                                        )}:{" "}
+                                        {formatScheduledDate(
+                                            placedOrder.delivery.scheduledDate,
+                                            isArabic,
+                                        )}
+                                    </div>
+                                )}
+
                             <div className="flex w-full flex-col justify-center gap-3 sm:flex-row">
                                 <button
                                     type="button"
@@ -756,10 +836,16 @@ const Checkout = () => {
 
     const isOnlineDisabled = totalPrice < MIN_ONLINE_TOTAL;
 
+    const isDeliveryDone = deliveryType === "now" || Boolean(scheduledDate);
+
     const missingSteps = [];
 
     if (!savedAddress) {
         missingSteps.push(tr("Add a delivery address", "أضف عنوان التوصيل"));
+    }
+
+    if (deliveryType === "later" && !scheduledDate) {
+        missingSteps.push(tr("Choose a delivery date", "اختر تاريخ التوصيل"));
     }
 
     if (!paymentMethod) {
@@ -833,9 +919,99 @@ const Checkout = () => {
                                 )}
                             </SectionCard>
 
-                            {/* 02 Payment */}
+                            {/* 02 Delivery time */}
                             <SectionCard
                                 number="02"
+                                done={isDeliveryDone}
+                                title={tr("Delivery time", "موعد التوصيل")}
+                                description={tr(
+                                    "Get it as soon as possible or schedule it for a later date.",
+                                    "استلمه في أقرب وقت أو حدد تاريخًا لاحقًا.",
+                                )}
+                            >
+                                <div
+                                    role="radiogroup"
+                                    aria-label={tr(
+                                        "Delivery time",
+                                        "موعد التوصيل",
+                                    )}
+                                    className="grid gap-3 md:grid-cols-2"
+                                >
+                                    <PaymentCard
+                                        value="now"
+                                        selected={deliveryType === "now"}
+                                        onSelect={handleSelectDeliveryType}
+                                        icon={Zap}
+                                        title={tr("Order now", "اطلب الآن")}
+                                        description={tr(
+                                            "We'll prepare and deliver your order as soon as possible.",
+                                            "سنجهّز طلبك ونوصله في أقرب وقت.",
+                                        )}
+                                    />
+
+                                    <PaymentCard
+                                        value="later"
+                                        selected={deliveryType === "later"}
+                                        onSelect={handleSelectDeliveryType}
+                                        icon={CalendarDays}
+                                        title={tr(
+                                            "Order for later",
+                                            "اطلب لوقت لاحق",
+                                        )}
+                                        description={tr(
+                                            "Pick the date you want your order delivered.",
+                                            "اختر التاريخ الذي تريد توصيل طلبك فيه.",
+                                        )}
+                                    />
+                                </div>
+
+                                {deliveryType === "later" && (
+                                    <div className="mt-4 border border-primary/25 bg-blush/30 p-4">
+                                        <FormField
+                                            label={tr(
+                                                "Delivery date",
+                                                "تاريخ التوصيل",
+                                            )}
+                                            required
+                                        >
+                                            <input
+                                                type="date"
+                                                dir="ltr"
+                                                value={scheduledDate}
+                                                min={minDate}
+                                                max={maxDate}
+                                                onChange={(event) =>
+                                                    setScheduledDate(
+                                                        event.target.value,
+                                                    )
+                                                }
+                                                className={`${inputClass} w-full border px-3 outline-none`}
+                                            />
+                                        </FormField>
+
+                                        {scheduledDate ? (
+                                            <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-primary">
+                                                <Check className="size-3.5" />
+                                                {formatScheduledDate(
+                                                    scheduledDate,
+                                                    isArabic,
+                                                )}
+                                            </p>
+                                        ) : (
+                                            <p className="mt-2 text-xs leading-relaxed text-ink/60">
+                                                {tr(
+                                                    `You can schedule up to ${MAX_SCHEDULE_DAYS} days ahead, starting tomorrow.`,
+                                                    `يمكنك الجدولة حتى ${MAX_SCHEDULE_DAYS} يومًا مقدمًا، بدءًا من الغد.`,
+                                                )}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+                            </SectionCard>
+
+                            {/* 03 Payment */}
+                            <SectionCard
+                                number="03"
                                 done={Boolean(paymentMethod)}
                                 title={tr("Payment method", "طريقة الدفع")}
                                 description={tr(
@@ -902,9 +1078,9 @@ const Checkout = () => {
                                 )}
                             </SectionCard>
 
-                            {/* 03 Review */}
+                            {/* 04 Review */}
                             <SectionCard
-                                number="03"
+                                number="04"
                                 done={isCheckoutReady}
                                 title={tr("Order review", "مراجعة الطلب")}
                                 description={tr(
@@ -1107,6 +1283,24 @@ const Checkout = () => {
                                                     )}
                                                 </p>
                                             )}
+
+                                            {deliveryType === "later" &&
+                                                scheduledDate && (
+                                                    <p className="mt-3 flex items-center gap-1.5 text-[11px] font-medium text-primary">
+                                                        <CalendarDays className="size-3.5 shrink-0" />
+                                                        <span>
+                                                            {tr(
+                                                                "Scheduled for",
+                                                                "موعد التوصيل",
+                                                            )}
+                                                            :{" "}
+                                                            {formatScheduledDate(
+                                                                scheduledDate,
+                                                                isArabic,
+                                                            )}
+                                                        </span>
+                                                    </p>
+                                                )}
                                         </>
                                     )}
 
@@ -1142,6 +1336,8 @@ const Checkout = () => {
                                         disabled={
                                             !savedAddress ||
                                             !paymentMethod ||
+                                            (deliveryType === "later" &&
+                                                !scheduledDate) ||
                                             !isCheckoutReady ||
                                             isProcessingOrder
                                         }
@@ -1407,7 +1603,10 @@ const AddressModal = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[90vh] w-[calc(100%-2rem)] !max-w-2xl overflow-y-auto rounded-[14px] border border-ink/10 bg-cream p-5 md:p-7">
+            <DialogContent
+                data-lenis-prevent
+                className="max-h-[90vh] w-[calc(100%-2rem)] !max-w-2xl overflow-y-auto rounded-[14px] border border-ink/10 bg-cream p-5 md:p-7"
+            >
                 <DialogHeader className="text-start">
                     <DialogTitle className="font-display text-2xl font-semibold text-primary">
                         {hasSavedAddress
@@ -1505,7 +1704,7 @@ const AddressModal = ({
                                     }
                                 >
                                     <SelectTrigger
-                                        className={`${inputClass} w-full`}
+                                        className={`${inputClass} h-11! min-h-11 w-full`}
                                     >
                                         <SelectValue
                                             placeholder={tr(
@@ -1515,7 +1714,7 @@ const AddressModal = ({
                                         />
                                     </SelectTrigger>
 
-                                    <SelectContent>
+                                    <SelectContent className={"rounded-none"}>
                                         {governorates.map((governorate) => (
                                             <SelectItem
                                                 key={governorate.value}
@@ -1705,7 +1904,7 @@ const FormField = ({ label, required, children }) => {
 };
 
 /* ---------------------------------------------------------------- */
-/* Payment                                                          */
+/* Payment / option card (Delivery time-এও ব্যবহার হয়)               */
 /* ---------------------------------------------------------------- */
 
 const PaymentCard = ({

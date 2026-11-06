@@ -320,12 +320,12 @@ const PopularCategories = () => {
                             {/* Content */}
                             <div className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-2 p-4 md:p-[23px]">
                                 <div className="min-w-0">
-                                    <h3 className="truncate font-serif text-md font-semibold text-cream md:text-2xl">
+                                    <h3 className=" font-serif text-md font-semibold text-cream md:text-2xl">
                                         {getName(cat)}
                                     </h3>
                                 </div>
 
-                                <span className="grid size-9 shrink-0 place-items-center border border-white/45 bg-white/5 text-white transition-colors duration-200 group-hover:bg-cream group-hover:text-primary rtl:-scale-x-100">
+                                <span className="hidden md:grid size-9 shrink-0 place-items-center border border-white/45 bg-white/5 text-white transition-colors duration-200 group-hover:bg-cream group-hover:text-primary rtl:-scale-x-100">
                                     <ArrowRight className="size-5" />
                                 </span>
                             </div>

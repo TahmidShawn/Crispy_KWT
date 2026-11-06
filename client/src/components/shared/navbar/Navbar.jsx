@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import {
     Search,
@@ -22,7 +21,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import logo from "@/assets/crispy.jpg";
 const menuItem =
     "cursor-pointer rounded-md p-0 text-primary focus:bg-blush focus:text-primary";
 
@@ -76,10 +75,7 @@ const Navbar = () => {
     const cartData = cartResponse?.data;
 
     const itemsCount =
-        cartData?.items?.reduce(
-            (total, item) => total + item.quantity,
-            0,
-        ) ?? 0;
+        cartData?.items?.reduce((total, item) => total + item.quantity, 0) ?? 0;
 
     // Logout
     const { mutate: logoutUser, isPending: isLoggingOut } = usePost({
@@ -112,10 +108,7 @@ const Navbar = () => {
         document.addEventListener("mousedown", handleClickOutside);
 
         return () => {
-            document.removeEventListener(
-                "mousedown",
-                handleClickOutside,
-            );
+            document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
 
@@ -166,9 +159,17 @@ const Navbar = () => {
                     }
                     aria-label={n.brandLabel}
                     dir="ltr"
-                    className="font-serif text-xl font-semibold tracking-[-0.04em] md:text-2xl"
+                    className="inline-flex shrink-0 items-center gap-2.5"
                 >
-                    CRISPY <span className="text-pink">KWT</span>
+                    <img
+                        src={logo}
+                        alt=""
+                        className="size-10 shrink-0 object-contain md:size-11"
+                    />
+
+                    <span className="whitespace-nowrap font-serif text-xl font-semibold tracking-[-0.04em] md:text-2xl">
+                        CRISPY <span className="text-pink">KWT</span>
+                    </span>
                 </Link>
 
                 {/* Search */}
@@ -287,10 +288,7 @@ const Navbar = () => {
                                 align="end"
                                 className="w-56 rounded-lg border-ink/10 bg-white p-1 text-ink shadow-md"
                             >
-                                <DropdownMenuItem
-                                    asChild
-                                    className={menuItem}
-                                >
+                                <DropdownMenuItem asChild className={menuItem}>
                                     <Link
                                         to={isAdmin ? "/admin" : "/dashboard"}
                                         className={menuInner}

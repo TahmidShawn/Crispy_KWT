@@ -1,48 +1,56 @@
-
 import { CakeSlice, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
 
 import { useLanguage } from "@/context/LanguageContext";
 
 const Footer = () => {
-    const { language, t } = useLanguage();
+    const { language } = useLanguage();
     const isArabic = language === "ar";
 
+    const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER;
+
     const navigationLinks = [
+        { label: isArabic ? "الرئيسية" : "Home", to: "/" },
         {
-            label: isArabic ? "الرئيسية" : "Home",
-            to: "/",
-        },
-        {
-            label: isArabic ? "جميع الكعكات" : "All Cakes",
-            to: "/cakes",
-        },
-        {
-            label: isArabic ? "الفئات" : "Categories",
-            to: "/categories",
-        },
-        {
-            label: isArabic ? "تواصل معنا" : "Contact Us",
-            to: "/contact",
+            label: isArabic ? "تتبع الطلب" : "Order Tracking",
+            to: "/order-tracking",
         },
     ];
 
     const accountLinks = [
+        { label: isArabic ? "تسجيل الدخول" : "Login", to: "/auth/login" },
+        { label: isArabic ? "سلة التسوق" : "Shopping Cart", to: "/cart" },
+        { label: isArabic ? "طلباتي" : "My Orders", to: "/dashboard/orders" },
+    ];
+
+    const legalLinks = [
         {
-            label: isArabic ? "تسجيل الدخول" : "Login",
-            to: "/login",
+            label: isArabic ? "الشروط والأحكام" : "Terms & Conditions",
+            to: "/terms",
         },
         {
-            label: isArabic ? "سلة التسوق" : "Shopping Cart",
-            to: "/cart",
-        },
-        {
-            label: isArabic ? "طلباتي" : "My Orders",
-            to: "/dashboard/orders",
+            label: isArabic ? "سياسة الخصوصية" : "Privacy Policy",
+            to: "/privacy",
         },
     ];
 
     const currentYear = new Date().getFullYear();
+
+    const renderLinks = (links) => (
+        <ul className="space-y-3">
+            {links.map((item) => (
+                <li key={item.to}>
+                    <Link
+                        to={item.to}
+                        className="group inline-flex items-center gap-1.5 text-sm text-ink transition-colors duration-200 hover:text-primary"
+                    >
+                        {item.label}
+                        <ArrowUpRight className="size-3.5 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100" />
+                    </Link>
+                </li>
+            ))}
+        </ul>
+    );
 
     return (
         <footer
@@ -50,7 +58,7 @@ const Footer = () => {
             className="mt-16 bg-primary/7 text-ink"
         >
             <div className="wrapper py-12 md:py-14">
-                <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr] lg:gap-16">
+                <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-12">
                     {/* Brand */}
                     <div className="max-w-sm">
                         <Link
@@ -78,43 +86,35 @@ const Footer = () => {
                         <h3 className="mb-4 text-sm font-semibold text-primary">
                             {isArabic ? "استكشف" : "Explore"}
                         </h3>
-
-                        <ul className="space-y-3">
-                            {navigationLinks.map((item) => (
-                                <li key={item.to}>
-                                    <Link
-                                        to={item.to}
-                                        className="group inline-flex items-center gap-1.5 text-sm text-ink transition-colors duration-200 hover:text-primary"
-                                    >
-                                        {item.label}
-
-                                        <ArrowUpRight className="size-3.5 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100" />
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
+                        {renderLinks(navigationLinks)}
                     </div>
 
-                    {/* Customer Account */}
+                    {/* Account */}
                     <div>
                         <h3 className="mb-4 text-sm font-semibold text-primary">
                             {isArabic ? "حسابك" : "Your Account"}
                         </h3>
+                        {renderLinks(accountLinks)}
+                    </div>
 
-                        <ul className="space-y-3">
-                            {accountLinks.map((item) => (
-                                <li key={item.to}>
-                                    <Link
-                                        to={item.to}
-                                        className="group inline-flex items-center gap-1.5 text-sm text-ink transition-colors duration-200 hover:text-primary"
-                                    >
-                                        {item.label}
+                    {/* Legal */}
+                    <div>
+                        <h3 className="mb-4 text-sm font-semibold text-primary">
+                            {isArabic ? "معلومات قانونية" : "Legal"}
+                        </h3>
+                        {renderLinks(legalLinks)}
 
-                                        <ArrowUpRight className="size-3.5 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100" />
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
+                        {whatsappNumber && (
+                            <a
+                                href={`https://wa.me/${whatsappNumber.replace(/\D/g, "")}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group mt-3 inline-flex items-center gap-1.5 text-sm text-ink transition-colors duration-200 hover:text-primary"
+                            >
+                                {isArabic ? "تواصل معنا" : "Contact Us"}
+                                <ArrowUpRight className="size-3.5 opacity-0 transition-all duration-200 group-hover:translate-x-0.5 group-hover:opacity-100" />
+                            </a>
+                        )}
                     </div>
                 </div>
 

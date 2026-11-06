@@ -1,3 +1,4 @@
+
 import { Link } from "react-router";
 import {
     Banknote,
@@ -6,89 +7,89 @@ import {
     RotateCcw,
     ShoppingBag,
     Truck,
+    ArrowUpRight,
 } from "lucide-react";
 
 import { useLanguage } from "@/context/LanguageContext";
-
 import { CONTACT_EMAIL } from "@/config/contact";
 
 const sections = [
     {
         id: "ordering",
         icon: ShoppingBag,
-        titleEn: "1. Ordering & availability",
-        titleAr: "1. الطلب والتوفر",
+        titleEn: "Ordering & Availability",
+        titleAr: "الطلب والتوفر",
         bodyEn: [
             "All cakes are subject to availability. If an item in your order becomes unavailable, we will contact you with a replacement or refund option.",
             "Please double-check your delivery address, phone number and any cake message or special instructions before placing your order.",
-            "Custom designs may need extra preparation time — we will confirm the delivery date with you after checkout.",
+            "Custom designs may need extra preparation time. We will confirm the delivery date with you after checkout.",
         ],
         bodyAr: [
             "جميع الكعكات تخضع للتوفر. إذا أصبح أي صنف غير متوفر سنتصل بك لاقتراح بديل أو استرداد المبلغ.",
             "يرجى التأكد من عنوان التوصيل ورقم الهاتف وأي رسالة على الكعكة أو ملاحظات خاصة قبل إتمام الطلب.",
-            "التصاميم المخصصة قد تحتاج وقت تحضير إضافي — سنؤكد معك موعد التوصيل بعد إتمام الشراء.",
+            "قد تحتاج التصاميم المخصصة إلى وقت إضافي للتحضير. سنؤكد معك موعد التوصيل بعد إتمام الشراء.",
         ],
     },
     {
         id: "payment",
         icon: Banknote,
-        titleEn: "2. Payment",
-        titleAr: "2. الدفع",
+        titleEn: "Payment",
+        titleAr: "الدفع",
         bodyEn: [
             "We accept secure online payment and cash on delivery across Kuwait.",
             "Online orders are confirmed only after payment succeeds. If payment fails or expires, the order is cancelled automatically and reserved stock is released.",
-            "All prices are shown in Kuwaiti Dinar (KWD) and include applicable charges shown at checkout.",
+            "All prices are displayed in Kuwaiti Dinar (KWD) and include applicable charges shown at checkout.",
         ],
         bodyAr: [
             "نقبل الدفع الإلكتروني الآمن والدفع نقدًا عند الاستلام في جميع أنحاء الكويت.",
             "يتم تأكيد الطلبات الإلكترونية فقط بعد نجاح الدفع. إذا فشل الدفع أو انتهت مهلته يُلغى الطلب تلقائيًا.",
-            "جميع الأسعار بالدينار الكويتي وتشمل الرسوم الموضحة عند إتمام الشراء.",
+            "جميع الأسعار معروضة بالدينار الكويتي وتشمل الرسوم الموضحة عند إتمام الشراء.",
         ],
     },
     {
         id: "delivery",
         icon: Truck,
-        titleEn: "3. Delivery",
-        titleAr: "3. التوصيل",
+        titleEn: "Delivery",
+        titleAr: "التوصيل",
         bodyEn: [
-            "We deliver across all Kuwait governorates. Delivery fees and time windows are shown at checkout.",
-            "Please keep your phone reachable on delivery day so our driver can reach you quickly.",
-            "Cakes are delicate — please check your order on arrival and report any damage the same day so we can help.",
+            "We deliver across all Kuwait governorates. Delivery fees and available time windows are displayed at checkout.",
+            "Please keep your phone reachable on delivery day so our driver can contact you.",
+            "Cakes are delicate. Please inspect your order upon arrival and report any damage on the same day so we can assist you.",
         ],
         bodyAr: [
-            "نوصل لجميع محافظات الكويت. تظهر رسوم التوصيل وأوقاته عند إتمام الشراء.",
-            "يرجى إبقاء هاتفك متاحًا يوم التوصيل ليتمكن السائق من الوصول إليك بسرعة.",
-            "الكعكات حساسة — يرجى فحص طلبك عند الاستلام والإبلاغ عن أي ضرر في نفس اليوم لنتمكن من مساعدتك.",
+            "نوصل لجميع محافظات الكويت. تظهر رسوم التوصيل والأوقات المتاحة عند إتمام الشراء.",
+            "يرجى إبقاء هاتفك متاحًا يوم التوصيل ليتمكن السائق من التواصل معك.",
+            "الكعكات حساسة. يرجى فحص طلبك عند الاستلام والإبلاغ عن أي ضرر في نفس اليوم لنتمكن من مساعدتك.",
         ],
     },
     {
         id: "cancellation",
         icon: RotateCcw,
-        titleEn: "4. Cancellation & refunds",
-        titleAr: "4. الإلغاء والاسترداد",
+        titleEn: "Cancellations & Refunds",
+        titleAr: "الإلغاء والاسترداد",
         bodyEn: [
-            "Because our cakes are baked fresh to order, cancellations are accepted before preparation starts — contact us as early as possible.",
-            "If we cannot fulfil your order, you receive a full refund to the original payment method.",
-            "Refund timing for online payments depends on your bank, typically within 5–14 business days.",
+            "Because our cakes are freshly prepared to order, cancellations are accepted before preparation begins. Please contact us as early as possible.",
+            "If we are unable to fulfil your order, you will receive a full refund to your original payment method.",
+            "Refund processing times for online payments depend on your bank and typically take 5–14 business days.",
         ],
         bodyAr: [
-            "لأن كعكاتنا تُخبز طازجة عند الطلب، يُقبل الإلغاء قبل بدء التحضير — تواصل معنا في أقرب وقت ممكن.",
-            "إذا تعذر علينا تنفيذ طلبك تحصل على استرداد كامل لنفس وسيلة الدفع.",
-            "مدة وصول المبلغ المسترد لمدفوعات الإنترنت تعتمد على البنك، عادة خلال 5–14 يوم عمل.",
+            "لأن كعكاتنا تُحضّر طازجة عند الطلب، يُقبل الإلغاء قبل بدء التحضير. يرجى التواصل معنا في أقرب وقت ممكن.",
+            "إذا تعذر علينا تنفيذ طلبك، ستحصل على استرداد كامل للمبلغ إلى وسيلة الدفع الأصلية.",
+            "تعتمد مدة معالجة استرداد المدفوعات الإلكترونية على البنك، وعادةً ما تستغرق من 5 إلى 14 يوم عمل.",
         ],
     },
     {
         id: "quality",
         icon: PackageCheck,
-        titleEn: "5. Quality promise",
-        titleAr: "5. وعد الجودة",
+        titleEn: "Product Quality",
+        titleAr: "جودة المنتجات",
         bodyEn: [
-            "Every cake is baked with real ingredients and finished by hand. Photos are illustrative — handmade decoration may vary slightly.",
-            "Store cakes as instructed (usually refrigerated) and enjoy within the recommended time for the best taste.",
+            "Every cake is prepared with carefully selected ingredients and finished by hand. Product photos are illustrative, and handmade decorations may vary slightly.",
+            "Please store cakes according to the provided instructions, usually refrigerated, and enjoy them within the recommended period for the best quality.",
         ],
         bodyAr: [
-            "كل كعكة تُخبز بمكونات حقيقية وتُجهز يدويًا. الصور توضيحية — قد تختلف الزخارف اليدوية قليلًا.",
-            "احفظ الكعكة حسب التعليمات (عادة في الثلاجة) واستمتع بها خلال المدة الموصى بها لأفضل طعم.",
+            "يتم تحضير كل كعكة بمكونات مختارة بعناية وتزيينها يدويًا. الصور توضيحية وقد تختلف الزخارف اليدوية قليلًا.",
+            "يرجى حفظ الكعكات وفقًا للتعليمات المقدمة، وعادةً في الثلاجة، والاستمتاع بها خلال المدة الموصى بها للحفاظ على أفضل جودة.",
         ],
     },
 ];
@@ -98,86 +99,138 @@ const TermsConditions = () => {
     const isArabic = language === "ar";
 
     return (
-        <main className="wrapper pt-4 pb-10 md:pb-14">
-           
-            <div className="mx-auto max-w-3xl">
-                <p className="text-sm font-semibold tracking-widest text-primary uppercase">
-                    {isArabic ? "الشروط" : "Terms"}
-                </p>
-                <h1 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">
-                    {isArabic ? "الشروط والأحكام" : "Terms & Conditions"}
-                </h1>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                    {isArabic
-                        ? "آخر تحديث: 2026 — باستخدامك متجر Crown Kwt فأنت توافق على الشروط التالية الخاصة بالطلب والدفع والتوصيل."
-                        : "Last updated: 2026 — by shopping with Crown Kwt you agree to the following terms on ordering, payment and delivery."}
-                </p>
+        <main
+            dir={isArabic ? "rtl" : "ltr"}
+            className="wrapper pb-16 pt-8 md:pt-12"
+        >
+            <div className="mx-auto max-w-4xl">
+                {/* Page Header */}
+                <header className="relative overflow-hidden rounded-2xl bg-primary/5 px-6 py-10 md:px-10 md:py-14">
+                    <div className="relative z-10 max-w-2xl">
+                        <span className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+                            {isArabic ? "معلومات قانونية" : "Legal Information"}
+                        </span>
 
-                <div className="mt-8 space-y-4">
-                    {sections.map((section) => (
-                        <section
-                            key={section.id}
-                            className="rounded-none rounded-tl-2xl rounded-br-2xl border border-border bg-card p-6 shadow-sm"
-                        >
-                            <div className="flex items-center gap-3">
-                                <span className="flex size-10 shrink-0 items-center justify-center rounded-none rounded-tl-xl rounded-br-xl bg-primary/10 text-primary">
-                                    <section.icon className="size-5" />
-                                </span>
-                                <h2 className="text-lg font-bold tracking-tight">
-                                    {isArabic ? section.titleAr : section.titleEn}
-                                </h2>
-                            </div>
-                            <ul className="mt-4 space-y-2.5">
-                                {(isArabic ? section.bodyAr : section.bodyEn).map(
-                                    (line) => (
-                                        <li
-                                            key={line.slice(0, 24)}
-                                            className="flex gap-2.5 text-sm leading-6 text-muted-foreground"
-                                        >
-                                            <span className="mt-[9px] size-1.5 shrink-0 rounded-full bg-primary" />
-                                            {line}
-                                        </li>
-                                    ),
-                                )}
-                            </ul>
-                        </section>
-                    ))}
+                        <h1 className="mt-3 text-3xl font-black tracking-tight text-ink md:text-5xl">
+                            {isArabic ? "الشروط والأحكام" : "Terms & Conditions"}
+                        </h1>
 
-                    <section className="rounded-none rounded-tl-2xl rounded-br-2xl border border-border bg-card p-6 shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <span className="flex size-10 shrink-0 items-center justify-center rounded-none rounded-tl-xl rounded-br-xl bg-primary/10 text-primary">
-                                <Mail className="size-5" />
-                            </span>
-                            <h2 className="text-lg font-bold tracking-tight">
-                                {isArabic ? "6. تواصل معنا" : "6. Contact us"}
-                            </h2>
-                        </div>
-                        <p className="mt-4 text-sm leading-6 text-muted-foreground">
+                        <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground md:text-base">
                             {isArabic
-                                ? "لأي سؤال حول طلبك أو هذه الشروط راسلنا على:"
-                                : "For any question about your order or these terms, email us at:"}
+                                ? "يرجى قراءة الشروط التالية بعناية لفهم سياسات الطلب والدفع والتوصيل عند التسوق من كريسبي كيه دبليو تي."
+                                : "Please read these terms carefully to understand our ordering, payment and delivery policies when shopping with Crispy KWT."}
                         </p>
-                        <a
-                            href={`mailto:${CONTACT_EMAIL}`}
-                            className="mt-2 inline-block text-sm font-semibold text-primary hover:underline"
-                        >
-                            {CONTACT_EMAIL}
-                        </a>
-                    </section>
+
+                        <p className="mt-5 text-xs font-medium text-muted-foreground">
+                            {isArabic
+                                ? "آخر تحديث: نوفمبر 2026"
+                                : "Last updated: November 2026"}
+                        </p>
+                    </div>
+
+                    <div className="pointer-events-none absolute -bottom-16 -end-12 size-56 rounded-full bg-primary/10 blur-3xl" />
+                </header>
+
+                {/* Introduction */}
+                <div className="mt-10 max-w-3xl">
+                    <p className="text-sm leading-7 text-muted-foreground md:text-base">
+                        {isArabic
+                            ? "مرحبًا بك في كريسبي كيه دبليو تي. باستخدامك لموقعنا وإتمامك لعملية شراء، فإنك توافق على الالتزام بالشروط والأحكام الموضحة أدناه."
+                            : "Welcome to Crispy KWT. By accessing our website and placing an order, you agree to the following terms and conditions. These guidelines help us provide a smooth and reliable shopping experience."}
+                    </p>
                 </div>
 
-                <div className="mt-8 flex flex-wrap gap-3">
+                {/* Terms Sections */}
+                <div className="mt-10">
+                    {sections.map((section) => {
+                        const Icon = section.icon;
+
+                        return (
+                            <section
+                                key={section.id}
+                                className="group grid gap-4 border-t border-border/70 py-7 md:grid-cols-[56px_1fr] md:gap-7 md:py-9"
+                            >
+                                {/* Section Icon */}
+                                <div>
+                                    <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                                        <Icon className="size-5" />
+                                    </span>
+                                </div>
+
+                                {/* Section Content */}
+                                <div>
+                                    <h2 className="text-lg font-bold tracking-tight text-ink md:text-xl">
+                                        {isArabic
+                                            ? section.titleAr
+                                            : section.titleEn}
+                                    </h2>
+
+                                    <ul className="mt-4 space-y-3">
+                                        {(isArabic
+                                            ? section.bodyAr
+                                            : section.bodyEn
+                                        ).map((line, lineIndex) => (
+                                            <li
+                                                key={lineIndex}
+                                                className="flex gap-3 text-sm leading-7 text-muted-foreground"
+                                            >
+                                                <span className="mt-[11px] size-1.5 shrink-0 rounded-full bg-primary/70" />
+                                                <span>{line}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </section>
+                        );
+                    })}
+                </div>
+
+                {/* Contact Section */}
+                <section className="mt-6 flex flex-col gap-5 rounded-2xl bg-primary/5 p-6 md:flex-row md:items-center md:justify-between md:p-8">
+                    <div className="flex items-start gap-4">
+                        <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white">
+                            <Mail className="size-5" />
+                        </span>
+
+                        <div>
+                            <h2 className="text-lg font-bold text-ink">
+                                {isArabic
+                                    ? "هل لديك استفسار؟"
+                                    : "Have a question?"}
+                            </h2>
+
+                            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                                {isArabic
+                                    ? "تواصل معنا إذا كنت بحاجة إلى أي توضيح بخصوص هذه الشروط."
+                                    : "Get in touch if you need any clarification about these terms."}
+                            </p>
+
+                            <a
+                                href={`mailto:${CONTACT_EMAIL}`}
+                                className="mt-2 inline-block text-sm font-semibold text-primary hover:underline"
+                            >
+                                {CONTACT_EMAIL}
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Related Links */}
+                <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
                     <Link
                         to="/privacy"
-                        className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium transition-colors hover:border-primary/40 hover:text-primary"
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-ink transition-colors hover:text-primary"
                     >
                         {isArabic ? "سياسة الخصوصية" : "Privacy Policy"}
+                        <ArrowUpRight className="size-4" />
                     </Link>
+
                     <Link
                         to="/order-tracking"
-                        className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium transition-colors hover:border-primary/40 hover:text-primary"
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-ink transition-colors hover:text-primary"
                     >
-                        {isArabic ? "تتبع الطلب" : "Track order"}
+                        {isArabic ? "تتبع الطلب" : "Track Your Order"}
+                        <ArrowUpRight className="size-4" />
                     </Link>
                 </div>
             </div>
