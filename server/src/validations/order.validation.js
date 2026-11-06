@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { getKuwaitDateString, MAX_SCHEDULE_DAYS } from "../utils/kuwaitDate.js";
 
 const objectId = z
     .string({ error: "ID is required" })
@@ -142,5 +143,67 @@ export const createOrderSchema = z
             .default([]),
 
         shippingAddress: shippingAddressSchema,
+
+        deliveryType: z
+            .enum(["now", "later"], {
+                error: "Please select a valid delivery option",
+            })
+            .default("now"),
+
+        scheduledDate: z
+            .string()
+            .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid delivery date")
+            .optional(),
     })
-    .strict();
+    .strict()
+    .superRefine((data, ctx) => {
+        if (data.deliveryType === "now") {
+            if (data.scheduledDate) {
+                ctx.addIssue({
+                    code: "custom",
+                    path: ["scheduledDate"],
+                    message:
+                        "Delivery date is only allowed for scheduled orders",
+                });
+            }
+
+            return;
+        }
+
+        // deliveryType === "later"
+        if (!data.scheduledDate) {
+            ctx.addIssue({
+                code: "custom",
+                path: ["scheduledDate"],
+                message: "Please select a delivery date",
+            });
+
+            return;
+        }
+
+        const isRealDate =
+            !Number.isNaN(Date.parse(data.scheduledDate)) &&
+            new Date(data.scheduledDate).toISOString().slice(0, 10) ===
+                data.scheduledDate;
+
+        if (!isRealDate) {
+            ctx.addIssue({
+                code: "custom",
+                path: ["scheduledDate"],
+                message: "Invalid delivery date",
+            });
+
+            return;
+        }
+
+        const min = getKuwaitDateString(1);
+        const max = getKuwaitDateString(MAX_SCHEDULE_DAYS);
+
+        if (data.scheduledDate < min || data.scheduledDate > max) {
+            ctx.addIssue({
+                code: "custom",
+                path: ["scheduledDate"],
+                message: `Delivery date must be between ${min} and ${max}`,
+            });
+        }
+    });

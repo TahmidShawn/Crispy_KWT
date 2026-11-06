@@ -4,12 +4,21 @@ import Cart from "../models/cart.model.js";
 import Cake from "../models/cake.model.js";
 import AddOn from "../models/addOn.model.js";
 import ErrorHandler from "../utils/errorHandler.js";
-import asyncHandler from "../utils/asyncHandler.js";
-const round3 = (value) => Number(Number(value).toFixed(3));
+import asyncHandler from "../utils/asyncHandler.js";
+
+const round3 = (value) => Number(Number(value).toFixed(3));
+
 const MIN_ONLINE_TOTAL = 0.1;
 
 export const createOrder = asyncHandler(async (req, res) => {
-    const { paymentMethod, cakeIds, addOns = [], shippingAddress } = req.body;
+    const {
+        paymentMethod,
+        cakeIds,
+        addOns = [],
+        shippingAddress,
+        deliveryType = "now",
+        scheduledDate,
+    } = req.body;
 
     const session = await mongoose.startSession();
 
@@ -23,7 +32,8 @@ export const createOrder = asyncHandler(async (req, res) => {
 
             if (!cart || !cart.items.length) {
                 throw new ErrorHandler("Your cart is empty", 400);
-            }
+            }
+
             const selectedCartItems = cart.items.filter((item) =>
                 cakeIds.includes(item.cake.toString()),
             );
@@ -33,7 +43,8 @@ export const createOrder = asyncHandler(async (req, res) => {
                     "Please select at least one item to place an order",
                     400,
                 );
-            }
+            }
+
             if (selectedCartItems.length !== cakeIds.length) {
                 throw new ErrorHandler(
                     "One or more selected items are not in your cart",
@@ -41,7 +52,8 @@ export const createOrder = asyncHandler(async (req, res) => {
                 );
             }
 
-            const selectedCakeIds = selectedCartItems.map((item) => item.cake);
+            const selectedCakeIds = selectedCartItems.map((item) => item.cake);
+
             const cakes = await Cake.find({
                 _id: { $in: selectedCakeIds },
                 isActive: true,
@@ -58,8 +70,10 @@ export const createOrder = asyncHandler(async (req, res) => {
                 cakes.map((cake) => [cake._id.toString(), cake]),
             );
 
-            const orderItems = [];
-            let subtotal = 0;
+            const orderItems = [];
+
+            let subtotal = 0;
+
             let discount = 0;
 
             for (const cartItem of selectedCartItems) {
@@ -84,7 +98,8 @@ export const createOrder = asyncHandler(async (req, res) => {
                         `Invalid price for "${cake.name.en}"`,
                         500,
                     );
-                }
+                }
+
                 const unitPrice = round3(cake.discountedPrice ?? cake.price);
 
                 const originalLineTotal = round3(
@@ -109,7 +124,8 @@ export const createOrder = asyncHandler(async (req, res) => {
             }
 
             const orderAddOns = [];
-            const selectedAddOnIds = [];
+            const selectedAddOnIds = [];
+
             if (addOns.length) {
                 const addOnIds = addOns.map((item) => item.addOnId);
 
@@ -120,7 +136,8 @@ export const createOrder = asyncHandler(async (req, res) => {
                         "Duplicate add-ons are not allowed",
                         400,
                     );
-                }
+                }
+
                 const cartAddOnIds = new Set(
                     cart.addOns.map((item) => item.addOn.toString()),
                 );
@@ -187,13 +204,15 @@ export const createOrder = asyncHandler(async (req, res) => {
                             "One or more selected add-ons are not in your cart",
                             400,
                         );
-                    }
+                    }
+
                     if (selectedAddOn.quantity > cartAddOn.quantity) {
                         throw new ErrorHandler(
                             "Add-on quantity exceeds the quantity in your cart",
                             400,
                         );
-                    }
+                    }
+
                     const addOnTotal = round3(
                         addOn.price * selectedAddOn.quantity,
                     );
@@ -219,8 +238,10 @@ export const createOrder = asyncHandler(async (req, res) => {
             const deliveryFee = 0;
 
             subtotal = round3(subtotal);
-            discount = round3(discount);
-            const totalPrice = round3(subtotal - discount + deliveryFee);
+            discount = round3(discount);
+
+            const totalPrice = round3(subtotal - discount + deliveryFee);
+
             if (paymentMethod === "online" && totalPrice < MIN_ONLINE_TOTAL) {
                 throw new ErrorHandler(
                     "Online payment requires a minimum order total of 0.100 KWD. Please add items or choose cash on delivery.",
@@ -228,11 +249,22 @@ export const createOrder = asyncHandler(async (req, res) => {
                 );
             }
 
+            const baseNote =
+                paymentMethod === "online"
+                    ? "Order created and awaiting payment"
+                    : "Order placed";
+
             const [order] = await Order.create(
                 [
                     {
                         user: req.user._id,
                         shippingAddress,
+                        delivery: {
+                            mode: deliveryType,
+                            ...(deliveryType === "later"
+                                ? { scheduledDate }
+                                : {}),
+                        },
                         items: orderItems,
                         addOns: orderAddOns,
                         paymentMethod,
@@ -246,15 +278,16 @@ export const createOrder = asyncHandler(async (req, res) => {
                             {
                                 status: "pending",
                                 note:
-                                    paymentMethod === "online"
-                                        ? "Order created and awaiting payment"
-                                        : "Order placed",
+                                    deliveryType === "later"
+                                        ? `${baseNote} (scheduled for ${scheduledDate})`
+                                        : baseNote,
                             },
                         ],
                     },
                 ],
                 { session },
-            );
+            );
+
             for (const cartItem of selectedCartItems) {
                 const result = await Cake.updateOne(
                     {
@@ -278,7 +311,6 @@ export const createOrder = asyncHandler(async (req, res) => {
                 }
             }
 
-            
             if (paymentMethod === "cash_on_delivery") {
                 await Cart.updateOne(
                     {
@@ -352,14 +384,13 @@ export const getMyOrder = asyncHandler(async (req, res) => {
     });
 });
 
-
 export const trackOrder = asyncHandler(async (req, res) => {
     const { orderNumber } = req.params;
 
     const order = await Order.findOne({
         orderNumber: String(orderNumber).trim().toUpperCase(),
     }).select(
-        "orderNumber orderStatus paymentStatus paymentMethod createdAt updatedAt deliveredAt cancelledAt cancellationReason statusHistory items addOns",
+        "orderNumber orderStatus paymentStatus paymentMethod delivery createdAt updatedAt deliveredAt cancelledAt cancellationReason statusHistory items addOns",
     );
 
     if (!order) {
@@ -369,8 +400,7 @@ export const trackOrder = asyncHandler(async (req, res) => {
         );
     }
 
-    const itemCount =
-        (order.items?.length ?? 0) + (order.addOns?.length ?? 0);
+    const itemCount = (order.items?.length ?? 0) + (order.addOns?.length ?? 0);
 
     const totalQuantity =
         (order.items ?? []).reduce(
@@ -390,6 +420,7 @@ export const trackOrder = asyncHandler(async (req, res) => {
             orderStatus: order.orderStatus,
             paymentStatus: order.paymentStatus,
             paymentMethod: order.paymentMethod,
+            delivery: order.delivery,
             createdAt: order.createdAt,
             deliveredAt: order.deliveredAt,
             cancelledAt: order.cancelledAt,
@@ -578,7 +609,8 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
                 updatedOrder = order;
 
                 return;
-            }
+            }
+
             if (
                 order.paymentMethod === "online" &&
                 order.paymentStatus !== "paid"
@@ -587,7 +619,8 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
                     "Online order must be paid before it can be processed",
                     400,
                 );
-            }
+            }
+
             const allowedTransitions = {
                 pending: ["confirmed", "out_for_delivery", "delivered"],
                 confirmed: ["out_for_delivery", "delivered"],
@@ -612,7 +645,8 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
             order.orderStatus = status;
 
             if (status === "delivered") {
-                order.deliveredAt = new Date();
+                order.deliveredAt = new Date();
+
                 if (order.paymentMethod === "cash_on_delivery") {
                     order.paymentStatus = "paid";
                 }
@@ -637,7 +671,9 @@ export const updateOrderNotes = asyncHandler(async (req, res) => {
     const { id } = req.params;
 
     const adminNotes =
-        typeof req.body.adminNotes === "string" ? req.body.adminNotes.trim() : "";
+        typeof req.body.adminNotes === "string"
+            ? req.body.adminNotes.trim()
+            : "";
 
     if (adminNotes.length > 1000) {
         throw new ErrorHandler(

@@ -8,6 +8,8 @@ export const ORDER_STATUSES = [
     "cancelled",
 ];
 
+export const DELIVERY_MODES = ["now", "later"];
+
 const orderSchema = new mongoose.Schema(
     {
         orderNumber: {
@@ -30,7 +32,8 @@ const orderSchema = new mongoose.Schema(
                 trim: true,
                 minLength: [4, "Full name must be at least 4 characters"],
                 maxLength: [30, "Full name cannot exceed 30 characters"],
-            },
+            },
+
             phone: {
                 type: String,
                 required: true,
@@ -88,6 +91,21 @@ const orderSchema = new mongoose.Schema(
                 type: String,
                 trim: true,
                 maxLength: [300, "Delivery notes cannot exceed 300 characters"],
+            },
+        },
+
+        // এখনই ডেলিভারি নাকি পরের কোনো তারিখে
+        delivery: {
+            mode: {
+                type: String,
+                enum: DELIVERY_MODES,
+                default: "now",
+            },
+
+            // শুধু mode === "later" হলে থাকবে। ফরম্যাট YYYY-MM-DD (Kuwait date)
+            scheduledDate: {
+                type: String,
+                match: [/^\d{4}-\d{2}-\d{2}$/, "Invalid delivery date"],
             },
         },
 
@@ -306,6 +324,10 @@ orderSchema.index({
 
 orderSchema.index({
     orderStatus: 1,
+});
+
+orderSchema.index({
+    "delivery.scheduledDate": 1,
 });
 
 const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
